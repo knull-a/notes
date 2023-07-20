@@ -1,10 +1,13 @@
 import "./index.css";
 
+import Navbar from "@/components/Navbar/Navbar";
+import { AppRoutes } from "@/routes";
+
 function App() {
   return (
     <>
-      <div className="text-2xl bg-slate-500">Hello world</div>
-      <div className="rounded bg-black w-11 h-11"></div>
+      <Navbar />
+      <AppRoutes />
     </>
   );
 }
