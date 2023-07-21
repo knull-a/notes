@@ -1,13 +1,35 @@
-import express, { Application, Request, Response } from "express";
+import express, {json, Request, Response, urlencoded } from "express";
+import cookieParser from "cookie-parser"
+import MongoStore from "connect-mongo"
+import session from "express-session"
+import dotenv from "dotenv"
+import "./database"
 
-const app: Application = express();
+import notesRoute from "./routes/notes";
+import archiveRoute from "./routes/archive"
 
-const port: number = 3001;
+dotenv.config()
 
-app.get("/greetings", (req: Request, res: Response) => {
-  res.send("Hello world");
-});
+const app = express();
 
-app.listen(port, function () {
-  console.log(`App is listening on http://localhost:${port} !`);
-});
+const port = 3001;
+
+app.use(json())
+app.use(urlencoded())
+
+app.use(cookieParser())
+app.use(
+  session({
+    secret: process.env.SECRET_KEY || "",
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: "mongodb://localhost:27017/notes"
+    })
+  })
+);
+
+app.use("/api/v1/notes", notesRoute)
+app.use("/api/v1/archive", archiveRoute)
+
+app.listen(port, () => console.log(`App is listening on http://localhost:${port} !`));
