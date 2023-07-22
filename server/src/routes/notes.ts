@@ -1,32 +1,65 @@
-import { Router } from "express";
+import { Router, Request, Response } from "express";
 import { Note } from "../database/schemas/Notes";
 
 const notesRoute = Router();
 
-notesRoute.get("/", async (req, res) => {
-  const notes = await Note.find({ isArchived: false });
-  res.send(notes);
-});
+export const getAllNotes = async (req: Request, res: Response) => {
+  try {
+    const notes = await Note.find({ isArchived: false });
+    res.status(200).json(notes);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
-notesRoute.post("/", async (req, res) => {
+const createNote = async (req: Request, res: Response) => {
   const { title, text, isPinned, isArchived } = req.body;
-  await Note.create({ title, text, isPinned, isArchived });
-  res.send(201);
-});
+  try {
+    const newNote = await Note.create({ title, text, isPinned, isArchived });
+    res.status(201).json(newNote);
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
-notesRoute.get("/:id", async (req, res) => {
-  const note = await Note.findOne({ _id: req.params.id });
-  res.send(note);
-});
+export const getNoteById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const note = await Note.findOne({ _id: id });
+    if (!note) {
+      res.status(404).json({ error: "Note not found" });
+    } else {
+      res.status(200).json(note);
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
-notesRoute.patch("/:id", async (req, res) => {
-  await Note.findOneAndUpdate({ _id: req.params.id }, req.body);
-  res.send(200);
-});
+export const updateNoteById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    await Note.findOneAndUpdate({ _id: id }, req.body);
+    res.status(200).json({ message: "Note updated successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
-notesRoute.delete("/:id", async (req, res) => {
-  await Note.findOneAndRemove({ _id: req.params.id });
-  res.send(200);
-});
+export const deleteNoteById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    await Note.findOneAndRemove({ _id: id });
+    res.status(200).json({ message: "Note deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+notesRoute.get("/", getAllNotes);
+notesRoute.post("/", createNote);
+notesRoute.get("/:id", getNoteById);
+notesRoute.patch("/:id", updateNoteById);
+notesRoute.delete("/:id", deleteNoteById);
 
 export default notesRoute;
