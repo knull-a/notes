@@ -16,7 +16,7 @@ import "./Sidebar.css";
 export const Sidebar = () => {
   const { isActive } = useSidebarStore();
   const sidebarClasses = classNames({
-    "fixed top-0 left-0 z-40 w-64 h-screen pt-16 transition-transform  bg-white border-r border-gray-200":
+    "fixed top-0 left-0 z-40 w-64 h-screen pt-16 transition-transform border-r border-slightly-dark":
       true,
     "-translate-x-full": isActive === true,
     "translate-x-0": isActive === false,

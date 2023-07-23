@@ -9,7 +9,9 @@ function App() {
     <div>
       <Navbar />
       <Sidebar />
-      <AppRoutes />
+      <div className="mt-28 mx-auto max-w-7xl">
+        <AppRoutes />
+      </div>
     </div>
   );
 }
