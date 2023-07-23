@@ -3,6 +3,8 @@ import cookieParser from "cookie-parser"
 import MongoStore from "connect-mongo"
 import session from "express-session"
 import dotenv from "dotenv"
+import cors from "cors"
+
 import "./database"
 
 import notesRoute from "./routes/notes";
@@ -16,6 +18,7 @@ const port = 3001;
 
 app.use(json())
 app.use(urlencoded())
+app.use(cors())
 
 app.use(cookieParser())
 app.use(
