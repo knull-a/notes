@@ -9,7 +9,7 @@ function App() {
     <div>
       <Navbar />
       <Sidebar />
-      <div className="mt-28 mx-auto max-w-7xl">
+      <div className="mt-28 mx-auto px-72 font-sans">
         <AppRoutes />
       </div>
     </div>

@@ -6,3 +6,9 @@ body {
   background-color: #202124;
   color: white;
 }
+
+@layer components {
+  .btn {
+    @apply hover:bg-slightly-dark p-2 rounded-full
+  }
+}
