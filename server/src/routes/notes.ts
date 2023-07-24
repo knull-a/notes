@@ -13,12 +13,12 @@ export const getAllNotes = async (req: Request, res: Response) => {
 };
 
 const createNote = async (req: Request, res: Response) => {
-  const { title, text, isPinned, isArchived } = req.body;
   try {
+    const { title, text, isPinned, isArchived } = req.body;
     const newNote = await Note.create({ title, text, isPinned, isArchived });
     res.status(201).json(newNote);
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    res.status(400).json({error})
   }
 };
 
