@@ -41,8 +41,8 @@ const NotesPage = () => {
 
   return (
     <>
-      <NotesList notes={pinnedNotes} />
-      <NotesList notes={notes} />
+      <NotesList title="Pinned" notes={pinnedNotes} />
+      <NotesList title="Other notes" notes={notes} />
     </>
   );
 };
