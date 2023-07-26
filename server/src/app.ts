@@ -10,6 +10,7 @@ import "./database"
 import notesRoute from "./routes/notes";
 import archiveRoute from "./routes/archive"
 import labelRoute from "./routes/label";
+import pinnedRoute from "./routes/pinned";
 
 dotenv.config()
 
@@ -28,13 +29,14 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: MongoStore.create({
-      mongoUrl: "mongodb://localhost:27017/notes"
+      mongoUrl: "mongodb://127.0.0.1:27017/notes"
     })
   })
 );
 
 app.use("/api/v1/notes", notesRoute)
 app.use("/api/v1/archive", archiveRoute)
+app.use("/api/v1/pinned", pinnedRoute)
 app.use("/api/v1/label", labelRoute)
 
 app.listen(port, () => console.log(`App is listening on http://localhost:${port} !`));

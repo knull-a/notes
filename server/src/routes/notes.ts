@@ -6,7 +6,8 @@ const notesRoute = Router();
 export const getAllNotes = async (req: Request, res: Response) => {
   try {
     const notes = await Note.find({ isArchived: false });
-    res.status(200).json(notes);
+    const reversedNotes = notes.reverse()
+    res.status(200).json(reversedNotes);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
@@ -14,8 +15,7 @@ export const getAllNotes = async (req: Request, res: Response) => {
 
 const createNote = async (req: Request, res: Response) => {
   try {
-    const { title, text, isPinned, isArchived } = req.body;
-    const newNote = await Note.create({ title, text, isPinned, isArchived });
+    const newNote = await Note.create(req.body);
     res.status(201).json(newNote);
   } catch (error) {
     res.status(400).json({error})
