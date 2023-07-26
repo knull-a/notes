@@ -7,6 +7,12 @@ export default {
         "dark": "#202124",
         "slightly-dark": "#f1f3f43d"
       },
+      spacing: {
+        '72': '18rem',
+        '84': '21rem',
+        '96': '24rem',
+        '108': '27rem',
+      },
     },
     
   },
