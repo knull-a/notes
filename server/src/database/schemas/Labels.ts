@@ -1,10 +1,15 @@
 import mongoose, { mongo } from "mongoose";
+import { Note } from "./Notes";
 
 const LabelSchema = new mongoose.Schema({
   title: {
     type: mongoose.SchemaTypes.String,
-    default: "",
+    default: null,
     required: true
+  },
+  notes: {
+    type: mongoose.SchemaTypes.Array,
+    default: null 
   }
 })
 
