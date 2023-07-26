@@ -8,9 +8,6 @@ type Props = {
 };
 
 export const Searchbar = ({ width = 320, ...props }: Props) => {
-  const widthVariants = {
-
-  }
   const containerClasses = classNames({
     'bg-slightly-dark rounded-xl p-3 flex': true,
   });
