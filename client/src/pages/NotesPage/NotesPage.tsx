@@ -3,11 +3,12 @@ import axios from "axios";
 
 import "./NotesPage.css";
 import { NotesList } from "@/components/Notes/NotesList";
+import { useQuery } from "@tanstack/react-query";
 
 type Label = {
-  _id: string
-  title: string
-  notes: string[]
+  _id: string;
+  title: string;
+  notes: string[];
 };
 
 export type Note = {
@@ -23,30 +24,30 @@ export type Note = {
 };
 
 const NotesPage = () => {
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [pinnedNotes, setPinnedNotes] = useState<Note[]>([]);
-
-  const fetchData = async () => {
-    const { data: allNotes } = await axios.get(
-      "http://localhost:3001/api/v1/notes"
-    );
-    const { data: allPinnedNotes } = await axios.get(
-      "http://localhost:3001/api/v1/pinned"
-    );
-    setNotes(allNotes);
-    setPinnedNotes(allPinnedNotes);
+  async function fetchNotes<T>(name: string) {
+    const { data } = await axios.get<{data: T}>(`http://localhost:3001/api/v1/${name}`);
+    return data;
   };
+  const notes = useQuery({
+    queryKey: ['notes'],
+    queryFn: () => fetchNotes('notes')
+  })
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  const label = useQuery({
+    queryKey: ['labels'],
+    queryFn: () => fetchNotes('label')
+  })
 
-  if (!notes.length) return <div>Нет данных</div>;
+
+  // if (!notes.data) return <div>Нет данных</div>;
+
+  console.log(notes)
+  console.log(label)
 
   return (
     <>
-      <NotesList title="Pinned" notes={pinnedNotes} />
-      <NotesList title="Other notes" notes={notes} />
+      {/* <NotesList title="Pinned" notes={pinnedNotes} />
+      <NotesList title="Other notes" notes={notes} /> */}
     </>
   );
 };
