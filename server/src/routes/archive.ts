@@ -6,7 +6,7 @@ const archiveRoute = Router();
 
 archiveRoute.get("/", async (req, res) => {
   try {
-    const notes = await Note.find({ isArchived: true });
+    const notes = await Note.find({ isArchived: true, isPinned: false }).populate("labels");
     res.status(200).json(notes);
   } catch (error) {
     console.error(error)

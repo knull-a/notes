@@ -6,7 +6,7 @@ const pinnedRoute = Router();
 
 pinnedRoute.get("/", async (req, res) => {
   try {
-    const notes = await Note.find({ isPinned: true });
+    const notes = await Note.find({ isPinned: true, isArchived: false }).populate("labels");
     res.status(200).json(notes);
   } catch (error) {
     console.error(error)

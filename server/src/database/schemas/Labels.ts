@@ -7,10 +7,10 @@ const LabelSchema = new mongoose.Schema({
     default: null,
     required: true
   },
-  notes: {
-    type: mongoose.SchemaTypes.Array,
-    default: null 
-  }
+  notes: [{
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: 'note'
+  }]
 })
 
 export const Label = mongoose.model("label", LabelSchema)

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { Label } from "./Labels";
 
 const NoteSchema = new mongoose.Schema({
   title: {
@@ -19,10 +20,10 @@ const NoteSchema = new mongoose.Schema({
     type: mongoose.SchemaTypes.String,
     default: null,
   },
-  labels: {
-    type: mongoose.SchemaTypes.Array,
-    default: [],
-  },
+  labels: [{
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: "label"
+  }],
   isPinned: {
     type: mongoose.SchemaTypes.Boolean,
     required: true,
