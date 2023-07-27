@@ -44,7 +44,17 @@ export const NotesItem = ({ note }: Props) => {
       )}
       <h3 className="mb-2 font-medium">{note.title}</h3>
       <p>{note.text}</p>
-      <div className="buttons flex justify-center gap-10 mt-4 opacity-0 transition-opacity">
+      {note.labels && note.labels.length && (
+        <div className="flex mt-2">
+          {note.labels.map((label) => (
+            <div className="border border-slightly-dark rounded-2xl py-1 px-4" key={label._id}>
+              <div>{label.title}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="buttons flex justify-evenly mt-auto opacity-0 transition-opacity">
         <NoteButton path={mdiPaletteOutline} />
         <NoteButton path={mdiImageOutline} />
         <NoteButton path={mdiArchiveArrowDownOutline} />

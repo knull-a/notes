@@ -4,7 +4,11 @@ import axios from "axios";
 import "./NotesPage.css";
 import { NotesList } from "@/components/Notes/NotesList";
 
-type Label = {};
+type Label = {
+  _id: string
+  title: string
+  notes: string[]
+};
 
 export type Note = {
   _id: string;
@@ -12,7 +16,7 @@ export type Note = {
   text: string;
   image: string;
   color: string;
-  labels: Label;
+  labels: Label[];
   isPinned: boolean;
   isArchived: boolean;
   createdAt: string;

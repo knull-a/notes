@@ -26,7 +26,7 @@ export const NotesList = ({ notes, title }: Props) => {
       )}
       <div className={containerClasses(true)}>
         {notes.map((filteredNote) => (
-          <NotesItem note={filteredNote} />
+          <NotesItem key={filteredNote._id} note={filteredNote} />
         ))}
       </div>
     </div>
