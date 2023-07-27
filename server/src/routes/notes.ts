@@ -7,9 +7,19 @@ const notesRoute = Router();
 
 export const getAllNotes = async (req: Request, res: Response) => {
   try {
-    const notes = await Note.find({ isArchived: false, isPinned: false }).populate('labels');
-    const reversedNotes = notes.reverse();
-    res.status(200).json(reversedNotes);
+    const { search = '' } = req.query;
+    const notes = await Note.find({
+      isArchived: false,
+      isPinned: false,
+    }).populate("labels");
+    const filteredNotes = notes
+      .reverse()
+      .filter(
+        (note) =>
+          note.title.includes(search as string) ||
+          note.text.includes(search as string)
+      );
+    res.status(200).json(filteredNotes);
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
@@ -47,7 +57,7 @@ const createNote = async (req: Request, res: Response) => {
 export const getNoteById = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
-    const note = await Note.findOne({ _id: id }).populate('labels');
+    const note = await Note.findOne({ _id: id }).populate("labels");
     if (!note) {
       res.status(404).json({ error: "Note not found" });
     } else {
@@ -74,7 +84,7 @@ export const updateNoteById = async (req: Request, res: Response) => {
       const addedLabels = updatedNote.labels.filter(
         (label) => !noteToUpdate.labels.includes(label)
       );
-      
+
       const removedLabels = noteToUpdate.labels.filter(
         (label) => !updatedNote.labels.includes(label)
       );
@@ -101,12 +111,12 @@ export const updateNoteById = async (req: Request, res: Response) => {
         }
       }
     }
-    
+
     await session.commitTransaction();
-    
+
     res.status(200).json(updatedNote);
   } catch (error) {
-    console.error(error)
+    console.error(error);
     await session.abortTransaction();
     res.status(500).json({ error: "Internal server error" });
   } finally {
