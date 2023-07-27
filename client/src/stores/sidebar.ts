@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { isMobile } from "react-device-detect";
 
 type Store = {
@@ -6,7 +7,14 @@ type Store = {
   toggleActive: () => void
 }
 
-export const useSidebarStore = create<Store>()((set) => ({
-  isActive: isMobile ? true : false,
-  toggleActive: () => set((state) => ({isActive: !state.isActive}))
-}))
+export const useSidebarStore = create(
+  persist(
+    (set) => ({
+      isActive: isMobile ? true : false,
+      toggleActive: () => set((state: Store) => ({ isActive: !state.isActive })),
+    }),
+    {
+      name: 'sidebar-store',
+    }
+  )
+)
