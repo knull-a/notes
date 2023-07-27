@@ -5,8 +5,12 @@ const labelRoute = Router();
 
 labelRoute.get("/", async (req, res) => {
   try {
-    const labels = await Label.find({});
-    res.status(200).json(labels);
+    const { search = "" } = req.query;
+    const labels = await Label.find({}).populate("notes");
+    const filteredLabels = labels
+      .reverse()
+      .filter((label) => label.title.includes(search as string));
+    res.status(200).json(filteredLabels);
   } catch (error) {
     res.status(400).json({ error });
     console.error(error);
