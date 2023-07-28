@@ -7,19 +7,48 @@ const notesRoute = Router();
 
 export const getAllNotes = async (req: Request, res: Response) => {
   try {
-    const { search = '' } = req.query;
-    const notes = await Note.find({
+    const limit = parseInt(req.query.limit as string) || 10;
+    const page = parseInt(req.query.page as string) || 1;
+
+    const skip = (page - 1) * limit;
+    const searchParam =
+      typeof req.query.search === "string" ? req.query.search : "";
+
+    const notesQuery = {
+      $or: [
+        { title: new RegExp(searchParam, "i") },
+        { text: new RegExp(searchParam, "i") },
+      ],
       isArchived: false,
       isPinned: false,
-    }).populate("labels");
-    const filteredNotes = notes
-      .reverse()
-      .filter(
-        (note) =>
-          note.title.includes(search as string) ||
-          note.text.includes(search as string)
-      );
-    res.status(200).json(filteredNotes);
+    };
+
+    const noteCountQuery = {
+      $or: [
+        { title: new RegExp(searchParam, "i") },
+        { text: new RegExp(searchParam, "i") },
+      ],
+    };
+
+    const notes = await Note.find(notesQuery)
+      .skip(skip)
+      .limit(limit)
+      .populate("labels");
+
+    
+    const notesCount = await Note.count(noteCountQuery);
+
+    const totalPages = Math.ceil(notesCount / limit);
+
+    res.status(200).send({
+      data: notes,
+      paging: {
+        total: notesCount,
+        pages: totalPages,
+        currentPage: page,
+        pageSize: limit,
+      },
+    });
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
   }
