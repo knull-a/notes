@@ -23,31 +23,44 @@ export type Note = {
   createdAt: string;
 };
 
+export type WithPage<T> = {
+  data: T
+  paging: {
+    total: number
+    pages: number
+    currentPage: number
+    pageSize: number
+  }
+}
+
 const NotesPage = () => {
   async function fetchNotes<T>(name: string) {
-    const { data } = await axios.get<{data: T}>(`http://localhost:3001/api/v1/${name}`);
+    const { data } = await axios.get<T>(
+      `http://localhost:3001/api/v1/${name}`
+    );
     return data;
-  };
-  const notes = useQuery({
-    queryKey: ['notes'],
-    queryFn: () => fetchNotes('notes')
-  })
+  }
+  const {data: notes, isLoading: isNotesLoading, isError: hasNotesError} = useQuery(["notes"], () => fetchNotes<WithPage<Note[]>>("notes"));
 
-  const label = useQuery({
-    queryKey: ['labels'],
-    queryFn: () => fetchNotes('label')
-  })
+  const {data: pinnedNotes, isLoading: isPinnedLoading, isError: hasPinnedError} = useQuery(["pinned"], () => fetchNotes<Note[]>("pinned"));
 
+  // if () return <div>No data</div>;
 
-  // if (!notes.data) return <div>Нет данных</div>;
+  if (isNotesLoading) return <div>Query Notes Loading</div>
+  
+  if (hasNotesError) return <div>Query Notes error</div>
 
-  console.log(notes)
-  console.log(label)
+  if (isPinnedLoading) return <div>Query Pinned Loading</div>
+  
+  if (hasPinnedError) return <div>Query Pinned error</div>
+
+  console.log(notes.data);
+  console.log(pinnedNotes)
 
   return (
     <>
-      {/* <NotesList title="Pinned" notes={pinnedNotes} />
-      <NotesList title="Other notes" notes={notes} /> */}
+      <NotesList title="Pinned" notes={pinnedNotes} />
+      <NotesList title="Other notes" notes={notes.data} />
     </>
   );
 };
