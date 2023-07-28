@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import classNames from "classnames";
 
 import { Note } from "@/pages/NotesPage/NotesPage";
@@ -17,6 +18,21 @@ export const NotesList = ({ notes, title }: Props) => {
       "masonry-3": !isColumn,
       "mb-6": isPinned,
     });
+
+  // for dynamic scroll. Executing twice so I should use 0.5 instead of 1
+  const handleScroll = () => {
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+    console.log(scrollTop, scrollHeight, clientHeight)
+    if (scrollHeight - scrollTop === clientHeight) {
+      console.log('hello');
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div>
       {title && (
