@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create, StoreApi } from "zustand";
 import { persist } from "zustand/middleware";
 
 type Store = {
@@ -8,10 +8,9 @@ type Store = {
 
 export const useNavbarStore = create(
   persist(
-    (set) => ({
+    (set: StoreApi<Store>["setState"]) => ({
       isColumn: false,
-      toggleColumn: () =>
-        set((state: Store) => ({ isColumn: !state.isColumn })),
+      toggleColumn: () => set((state) => ({ isColumn: !state.isColumn })),
     }),
     {
       name: "navbar-store",
