@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { CustomInput } from "../Custom/CustomInput";
+import { CustomButton } from "../Custom/CustomButton";
 export const NotesForm = () => {
   const [dots, setDots] = useState("");
   const [text, setText] = useState("");
@@ -16,27 +18,25 @@ export const NotesForm = () => {
     <form className="border border-slightly-dark rounded-xl p-4 shadow-2xl max-w-xl m-auto">
       {(text || title) && (
         <div className="mb-4">
-          <input
+          <CustomInput
             placeholder="Enter title"
-            className="input text-xl"
-            type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
         </div>
       )}
       <div>
-        <textarea
+        <CustomInput
+          isTextarea
           placeholder={`Note${dots}`}
-          className="input"
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
       </div>
       {(text || title) && (
         <div className="flex gap-2 justify-end">
-          <button>Cancel</button>
-          <button>Save</button>
+          <CustomButton text="Cancel" />
+          <CustomButton text="Save" />
         </div>
       )}
     </form>
