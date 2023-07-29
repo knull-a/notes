@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 
 import "./NotesPage.css";
 import { CustomLoader } from "@/components/Custom/CustomLoader";
 import { NotesList } from "@/components/Notes/NotesList";
+import { NotesForm } from "@/components/Notes/NotesForm";
 
 type Label = {
   _id: string;
@@ -42,6 +43,7 @@ const NotesPage = () => {
     );
     return data;
   }
+
   async function fetchPageable<T>(name: string, page = 1) {
     const { data } = await axios.get<WithPage<T>>(
       `http://localhost:3001/api/v1/${name}`,
@@ -49,6 +51,7 @@ const NotesPage = () => {
     );
     return data;
   }
+
   const {
     data: pinnedNotes,
     isLoading: isPinnedLoading,
@@ -69,14 +72,16 @@ const NotesPage = () => {
           return lastPage.paging.currentPage + 1;
         else return undefined;
       },
+      keepPreviousData: true,
     }
   );
 
   const handleScroll = async () => {
     const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-    const scrollBottom = Math.floor(scrollHeight - scrollTop)
-    const beforeBottom = 200
-    const hasReachedBottom = (scrollBottom - clientHeight) < beforeBottom
+    const scrollBottom = Math.floor(scrollHeight - scrollTop);
+    const beforeBottom = 200;
+    const hasReachedBottom = scrollBottom - clientHeight < beforeBottom;
+    
     if (hasReachedBottom) {
       await fetchNextPage();
       console.log(notes);
@@ -88,23 +93,26 @@ const NotesPage = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // if () return <div>No data</div>;
+  if (isNotesLoading || isPinnedLoading)
+    return (
+      <div>
+        <CustomLoader />
+      </div>
+    );
 
-  if (isNotesLoading || isPinnedLoading) return <div><CustomLoader /></div>;
-
-  if (hasNotesError) return <div>Query Notes error</div>;
-
-  if (isPinnedLoading) return <div>Query Pinned Loading</div>;
-
-  if (hasPinnedError) return <div>Query Pinned error</div>;
+  if (hasNotesError || hasPinnedError) return <div>Query error</div>;
 
   console.log(notes);
   console.log(pinnedNotes);
 
   return (
     <>
+      <NotesForm />
       <NotesList title="Pinned" notes={pinnedNotes} />
-      <NotesList title="Other notes" notes={notes.pages.map(page => page.data).flat()} />
+      <NotesList
+        title="Other notes"
+        notes={notes.pages.map((page) => page.data).flat()}
+      />
     </>
   );
 };
