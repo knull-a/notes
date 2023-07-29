@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import axios from "axios";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 
 import "./NotesPage.css";
+import { CustomLoader } from "@/components/Custom/CustomLoader";
 import { NotesList } from "@/components/Notes/NotesList";
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 
 type Label = {
   _id: string;
@@ -73,7 +74,9 @@ const NotesPage = () => {
 
   const handleScroll = async () => {
     const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-    const hasReachedBottom = Math.floor(scrollHeight - scrollTop) == clientHeight;
+    const scrollBottom = Math.floor(scrollHeight - scrollTop)
+    const beforeBottom = 200
+    const hasReachedBottom = (scrollBottom - clientHeight) < beforeBottom
     if (hasReachedBottom) {
       await fetchNextPage();
       console.log(notes);
@@ -87,7 +90,7 @@ const NotesPage = () => {
 
   // if () return <div>No data</div>;
 
-  if (isNotesLoading) return <div>Query Notes Loading</div>;
+  if (isNotesLoading || isPinnedLoading) return <div><CustomLoader /></div>;
 
   if (hasNotesError) return <div>Query Notes error</div>;
 
@@ -101,7 +104,6 @@ const NotesPage = () => {
   return (
     <>
       <NotesList title="Pinned" notes={pinnedNotes} />
-      {/* {notes.pages.map(page => page.data.map(item => <div key={item._id}>{item.text} {item.image}</div> ))} */}
       <NotesList title="Other notes" notes={notes.pages.map(page => page.data).flat()} />
     </>
   );
