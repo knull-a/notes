@@ -19,7 +19,7 @@ export const NotesList = ({ notes, title }: Props) => {
     });
 
   return (
-    <div>
+    notes && <div>
       {title && (
         <h2 className="uppercase text-sm ml-4 mb-2 font-medium text-gray-300">
           {title}

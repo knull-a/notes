@@ -1,26 +1,17 @@
-import Icon from "@mdi/react";
 import {
-  mdiArchiveArrowDownOutline,
-  mdiDeleteOutline,
-  mdiImageOutline,
-  mdiPaletteOutline,
   mdiPin,
   mdiPinOutline,
 } from "@mdi/js";
+
 import classNames from "classnames";
 
 import { Note } from "@/pages/NotesPage/NotesPage";
-import { IconProps } from "@mdi/react/dist/IconProps";
+import { NotesButtonItem } from "@/components/Notes/NotesButtonItem";
+import { NotesButtonRow } from "./NotesButtonRow";
 
 type Props = {
   note: Note;
 };
-
-const NoteButton = ({ path, color }: IconProps) => (
-  <button className="btn">
-    <Icon path={path} color={color} size={1} />
-  </button>
-);
 
 export const NotesItem = ({ note }: Props) => {
   const noteClasses = (note: Note) =>
@@ -33,7 +24,7 @@ export const NotesItem = ({ note }: Props) => {
   return (
     <div className={noteClasses(note)} key={note._id}>
       <div className="absolute top-3 right-3 opacity-0 transition-opacity buttons">
-        <NoteButton path={note.isPinned ? mdiPin : mdiPinOutline} />
+        <NotesButtonItem path={note.isPinned ? mdiPin : mdiPinOutline} />
       </div>
       {note.image && (
         <img
@@ -47,19 +38,16 @@ export const NotesItem = ({ note }: Props) => {
       {note.labels && note.labels.length && (
         <div className="flex mt-2">
           {note.labels.map((label) => (
-            <div className="border border-slightly-dark rounded-2xl py-1 px-4" key={label._id}>
+            <div
+              className="border border-slightly-dark rounded-2xl py-1 px-4"
+              key={label._id}
+            >
               <div>{label.title}</div>
             </div>
           ))}
         </div>
       )}
-
-      <div className="buttons flex justify-evenly mt-auto opacity-0 transition-opacity">
-        <NoteButton path={mdiPaletteOutline} />
-        <NoteButton path={mdiImageOutline} />
-        <NoteButton path={mdiArchiveArrowDownOutline} />
-        <NoteButton path={mdiDeleteOutline} />
-      </div>
+      <NotesButtonRow isCreated />
     </div>
   );
 };
