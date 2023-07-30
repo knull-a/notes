@@ -14,6 +14,8 @@ export const NotesForm = () => {
     return () => clearInterval(timer);
   }, []);
 
+  
+
   return (
     <form className="border border-slightly-dark rounded-xl p-4 shadow-2xl max-w-xl m-auto">
       {(text || title) && (
