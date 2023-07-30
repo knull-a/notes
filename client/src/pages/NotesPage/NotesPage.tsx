@@ -2,61 +2,21 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 
-import "./NotesPage.css";
+import { useRest } from "@/services";
 import { CustomLoader } from "@/components/Custom/CustomLoader";
 import { NotesList } from "@/components/Notes/NotesList";
 import { NotesForm } from "@/components/Notes/NotesForm";
 
-type Label = {
-  _id: string;
-  title: string;
-  notes: string[];
-};
-
-export type Note = {
-  _id: string;
-  title: string;
-  text: string;
-  image: string;
-  color: string;
-  labels: Label[];
-  isPinned: boolean;
-  isArchived: boolean;
-  createdAt: string;
-};
-
-export type WithPage<T> = {
-  data: T;
-  paging: {
-    total: number;
-    pages: number;
-    currentPage: number;
-    pageSize: number;
-  };
-};
+import "./NotesPage.css";
 
 const NotesPage = () => {
-  async function fetchNotes<T>(name: string, page = 1) {
-    const { data } = await axios.get<T>(
-      `http://localhost:3001/api/v1/${name}`,
-      { params: { page } }
-    );
-    return data;
-  }
-
-  async function fetchPageable<T>(name: string, page = 1) {
-    const { data } = await axios.get<WithPage<T>>(
-      `http://localhost:3001/api/v1/${name}`,
-      { params: { page } }
-    );
-    return data;
-  }
+  const api = useRest();
 
   const {
     data: pinnedNotes,
     isLoading: isPinnedLoading,
     isError: hasPinnedError,
-  } = useQuery(["pinned"], () => fetchNotes<Note[]>("pinned"));
+  } = useQuery(["pinned"], async () => await api.pinned.getPinnedNotes());
 
   const {
     data: notes,
@@ -65,7 +25,7 @@ const NotesPage = () => {
     isError: hasNotesError,
   } = useInfiniteQuery(
     ["notes"],
-    ({ pageParam = 1 }) => fetchPageable<Note[]>("notes", pageParam),
+    async ({ pageParam = 1 }) => await api.notes.getNotes({ page: pageParam }),
     {
       getNextPageParam: (lastPage) => {
         if (lastPage.paging.currentPage < lastPage.paging.pages)
@@ -81,7 +41,7 @@ const NotesPage = () => {
     const scrollBottom = Math.floor(scrollHeight - scrollTop);
     const beforeBottom = 200;
     const hasReachedBottom = scrollBottom - clientHeight < beforeBottom;
-    
+
     if (hasReachedBottom) {
       await fetchNextPage();
       console.log(notes);
