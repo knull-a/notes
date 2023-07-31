@@ -1,6 +1,7 @@
+import type { Note } from "@/services/notes/types";
+
 import classNames from "classnames";
 
-import { Note } from "@/pages/NotesPage/NotesPage";
 import { useNavbarStore } from "@/stores/navbar";
 import { NotesItem } from "./NotesItem";
 

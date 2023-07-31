@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
 import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 
 import { useRest } from "@/services";
@@ -25,7 +24,7 @@ const NotesPage = () => {
     isError: hasNotesError,
   } = useInfiniteQuery(
     ["notes"],
-    async ({ pageParam = 1 }) => await api.notes.getNotes({ page: pageParam }),
+    async ({ pageParam = 1 }) => api.notes.getNotes({ page: pageParam }),
     {
       getNextPageParam: (lastPage) => {
         if (lastPage.paging.currentPage < lastPage.paging.pages)
