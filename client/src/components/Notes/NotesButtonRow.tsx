@@ -6,7 +6,7 @@ import {
 } from "@mdi/js";
 import classNames from "classnames";
 
-import { NotesButtonItem } from "./NotesButtonItem";
+import Icon from "@mdi/react";
 
 type Props = {
   isCreated?: boolean;
@@ -17,13 +17,33 @@ export const NotesButtonRow = ({ isCreated }: Props) => {
     "buttons flex justify-center gap-6 mt-auto transition-opacity": true,
     "opacity-0": isCreated,
   });
+  const labelList = [
+    {
+      id: 1,
+      path: mdiPaletteOutline 
+    }, 
+    {
+      id: 2,
+      path: mdiImageOutline
+    },
+    {
+      id: 3,
+      path: mdiArchiveArrowDownOutline
+    },
+    {
+      id: 4,
+      path: mdiDeleteOutline
+    }
+  ]
   
   return (
     <div className={rowClasses}>
-      <NotesButtonItem path={mdiPaletteOutline} />
-      <NotesButtonItem path={mdiImageOutline} />
-      <NotesButtonItem path={mdiArchiveArrowDownOutline} />
-      <NotesButtonItem path={mdiDeleteOutline} />
+      {labelList.map(label => (
+        <label className="btn" key={label.id}>
+          <input type="checkbox" />
+          <Icon path={label.path} />
+        </label>
+      ))}
     </div>
   );
 };

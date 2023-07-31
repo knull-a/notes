@@ -21,6 +21,9 @@ body {
   .btn {
     @apply hover:bg-slightly-dark p-2 rounded-full
   }
+  .btn .active {
+    @apply bg-slightly-dark
+  }
   .input {
     @apply bg-inherit outline-none resize-none w-full
   }
