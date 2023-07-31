@@ -1,3 +1,4 @@
+import type { Note } from "@/services/notes/types";
 import {
   mdiPin,
   mdiPinOutline,
@@ -5,9 +6,9 @@ import {
 
 import classNames from "classnames";
 
-import { Note } from "@/pages/NotesPage/NotesPage";
 import { NotesButtonItem } from "@/components/Notes/NotesButtonItem";
 import { NotesButtonRow } from "./NotesButtonRow";
+import { Link } from "react-router-dom";
 
 type Props = {
   note: Note;
@@ -16,13 +17,13 @@ type Props = {
 export const NotesItem = ({ note }: Props) => {
   const noteClasses = (note: Note) =>
     classNames({
-      "break-inside border border-slightly-dark p-3 cursor-default break-all mb-6 notes rounded-lg transition-all relative":
+      "block break-inside border border-slightly-dark p-3 cursor-default break-all mb-6 notes rounded-lg transition-all relative":
         true,
       [`bg-[${note.color}]`]: note.color,
     });
 
   return (
-    <div className={noteClasses(note)} key={note._id}>
+    <Link to={`/${note._id}`}  className={noteClasses(note)} key={note._id}>
       <div className="absolute top-3 right-3 opacity-0 transition-opacity buttons">
         <NotesButtonItem path={note.isPinned ? mdiPin : mdiPinOutline} />
       </div>
@@ -48,6 +49,6 @@ export const NotesItem = ({ note }: Props) => {
         </div>
       )}
       <NotesButtonRow isCreated />
-    </div>
+    </Link>
   );
 };
