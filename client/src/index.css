@@ -19,7 +19,7 @@ body {
 
 @layer components {
   .btn {
-    @apply hover:bg-slightly-dark p-2 rounded-full
+    @apply hover:bg-slightly-dark p-2 rounded-full cursor-pointer
   }
   .btn .active {
     @apply bg-slightly-dark
