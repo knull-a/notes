@@ -48,10 +48,14 @@ export const NotesButtonRow = ({ isCreated, functionsList }: Props) => {
   return (
     <div className={rowClasses}>
       {mergedLabelList.map((label) => (
-        <label className="btn" key={label.id} onClick={(e) => label.func && label.func(e)}>
-          <input type="checkbox" hidden />
+        <button
+          type="button"
+          className="btn"
+          key={label.id}
+          onClick={(e) => label.func && label.func(e)}
+        >
           <Icon path={label.path} size={1} />
-        </label>
+        </button>
       ))}
     </div>
   );

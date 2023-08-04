@@ -57,7 +57,7 @@ export const NotesItem = ({ note }: Props) => {
       )}
       <h3 className="mb-2 font-medium">{note.title}</h3>
       <p>{note.text}</p>
-      {note.labels && note.labels.length && (
+      {note.labels && (
         <div className="flex mt-2">
           {note.labels.map((label) => (
             <div
