@@ -19,7 +19,7 @@ export const NotesForm = () => {
   const [isPinned, setPinned] = useState(false);
 
   const api = useRest();
-  const { register, handleSubmit, getValues } = useForm<Note>();
+  const { register, handleSubmit, getValues, reset } = useForm<Note>();
   const { mutate, isLoading } = useMutation({
     mutationFn: async (newNote: Note) => {
       return await api.notes.postNote(newNote);
@@ -28,11 +28,14 @@ export const NotesForm = () => {
 
   const onSubmit: SubmitHandler<Note> = async (data) => {
     mutate(data)
+    reset()
     console.log(data);
   };
 
   const handlePinned = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPinned(e.target.checked);
+    getValues().isPinned = e.target.checked
+    console.log(isPinned, getValues())
   };
 
   useEffect(() => {
@@ -55,13 +58,15 @@ export const NotesForm = () => {
             register={register}
             placeholder="Enter title"
           />
-          <label className="btn">
             <input
+              className="absolute top-0 left-0"
+              id="isPinned"
               type="checkbox"
-              hidden
+              checked={isPinned}
               {...register("isPinned")}
               onChange={handlePinned}
             />
+          <label htmlFor="isPinned" className="btn">
             <Icon path={isPinned ? mdiPin : mdiPinOutline} size={1} />
           </label>
         </div>
