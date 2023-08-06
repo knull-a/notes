@@ -6,7 +6,7 @@ import Icon from "@mdi/react";
 import { mdiPin, mdiPinOutline } from "@mdi/js";
 
 import { useForm, SubmitHandler } from "react-hook-form";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { useRest } from "@/services";
 
@@ -18,12 +18,15 @@ export const NotesForm = () => {
   const [dots, setDots] = useState("");
   const [isPinned, setPinned] = useState(false);
 
+  const queryClient = useQueryClient()
+
   const api = useRest();
   const { register, handleSubmit, getValues, reset } = useForm<Note>();
   const { mutate, isLoading } = useMutation({
     mutationFn: async (newNote: Note) => {
       return await api.notes.postNote(newNote);
     },
+    onSuccess: () => queryClient.invalidateQueries(["notes"])
   });
 
   const onSubmit: SubmitHandler<Note> = async (data) => {

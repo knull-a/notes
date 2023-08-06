@@ -1,4 +1,7 @@
 import type { Note } from "@/services/notes/types";
+
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
 import { mdiPin, mdiPinOutline } from "@mdi/js";
 
 import classNames from "classnames";
@@ -6,6 +9,7 @@ import classNames from "classnames";
 import { NotesButtonRow } from "./NotesButtonRow";
 import { Link } from "react-router-dom";
 import Icon from "@mdi/react";
+import { useRest } from "@/services";
 
 type Props = {
   note: Note;
@@ -18,6 +22,17 @@ export const NotesItem = ({ note }: Props) => {
         true,
       [`bg-[${note.color}]`]: note.color,
     });
+
+  const queryClient = useQueryClient();
+
+  const api = useRest();
+
+  const { mutate } = useMutation({
+    mutationFn: async (id: string) => {
+      return await api.pinned.deletePinnedNote(id);
+    },
+    onSuccess: () => queryClient.invalidateQueries(["notes"]),
+  });
 
   const showColorChange = (
     e: React.MouseEvent<HTMLLabelElement, MouseEvent>
@@ -36,9 +51,13 @@ export const NotesItem = ({ note }: Props) => {
     e.preventDefault();
   };
 
-  const deleteNote = (e: React.MouseEvent<HTMLLabelElement, MouseEvent>) => {
-    console.log("deleteNote", note._id);
+  const deleteNote = async (
+    e: React.MouseEvent<HTMLLabelElement, MouseEvent>
+  ) => {
     e.preventDefault();
+    console.log("deleteNote", note._id);
+    mutate(note._id);
+    await api.notes.getNotes({ page: 1 });
   };
 
   return (
