@@ -7,7 +7,7 @@ import { mdiPin, mdiPinOutline } from "@mdi/js";
 import classNames from "classnames";
 
 import { NotesButtonRow } from "./NotesButtonRow";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Icon from "@mdi/react";
 import { useRest } from "@/services";
 
@@ -33,6 +33,8 @@ export const NotesItem = ({ note }: Props) => {
     },
     onSuccess: () => queryClient.invalidateQueries(["notes"]),
   });
+
+  const location = useLocation();
 
   const showColorChange = (
     e: React.MouseEvent<HTMLLabelElement, MouseEvent>
@@ -61,7 +63,12 @@ export const NotesItem = ({ note }: Props) => {
   };
 
   return (
-    <Link to={`/${note._id}`} className={noteClasses(note)} key={note._id}>
+    <Link
+      to={`/notes/${note._id}`}
+      className={noteClasses(note)}
+      key={note._id}
+      state={{ previousLocation: location }}
+    >
       <div className="absolute top-3 right-3 opacity-0 transition-opacity buttons">
         <button className="btn">
           <Icon path={note.isPinned ? mdiPin : mdiPinOutline} />
