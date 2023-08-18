@@ -8,9 +8,7 @@ type Props<T> = {
   name?: string;
   options?: RegisterOptions;
   register?: UseFormRegister<any>; // temp
-  onChange?: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => void;
+  onChange?: any;
 };
 
 export function CustomInput<T = any>({
@@ -19,6 +17,7 @@ export function CustomInput<T = any>({
   options,
   type = "text",
   name,
+  onChange,
   ...props
 }: Props<T>) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);

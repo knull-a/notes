@@ -1,21 +1,34 @@
+import type { Note } from "@/services/notes/types";
+
 import { useEffect } from "react";
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import { SubmitHandler, useForm } from "react-hook-form";
 
 import { useRest } from "@/services";
 import { CustomLoader } from "@/components/Custom/CustomLoader";
 import { NotesList } from "@/components/Notes/NotesList";
 import { NotesForm } from "@/components/Notes/NotesForm";
+import { useHandleScroll } from "@/hooks/useHandleScroll";
 
 import "./NotesPage.css";
 
 const NotesPage = () => {
   const api = useRest();
+  const queryClient = useQueryClient()
+
 
   const {
     data: pinnedNotes,
     isLoading: isPinnedLoading,
     isError: hasPinnedError,
   } = useQuery(["pinned"], async () => await api.pinned.getPinnedNotes());
+
+  const { mutate, isLoading: isSubmitLoading } = useMutation({
+    mutationFn: async (newNote: Note) => {
+      return await api.notes.postNote(newNote);
+    },
+    onSuccess: () => queryClient.invalidateQueries(["notes"])
+  });
 
   const {
     data: notes,
@@ -35,22 +48,18 @@ const NotesPage = () => {
     }
   );
 
-  const handleScroll = async () => {
-    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
-    const scrollBottom = Math.floor(scrollHeight - scrollTop);
-    const beforeBottom = 200;
-    const hasReachedBottom = scrollBottom - clientHeight < beforeBottom;
-
-    if (hasReachedBottom) {
-      await fetchNextPage();
-      console.log(notes);
-    }
-  };
+  const { register, handleSubmit, getValues, reset } = useForm<Note>();
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", () => useHandleScroll(fetchNextPage));
+    return () => window.removeEventListener("scroll", () => useHandleScroll(fetchNextPage));
   }, []);
+
+  const onSubmit: SubmitHandler<Note> = async (data) => {
+    mutate(data)
+    reset()
+  };
+
 
   if (isNotesLoading || isPinnedLoading)
     return (
@@ -66,7 +75,12 @@ const NotesPage = () => {
 
   return (
     <>
-      <NotesForm />
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="border border-slightly-dark rounded-xl p-4 shadow-2xl max-w-xl m-auto"
+      >
+        <NotesForm getValues={getValues} register={register} isLoading={isSubmitLoading}  />
+      </form>
       <NotesList title="Pinned" notes={pinnedNotes} />
       <NotesList
         title="Other notes"
