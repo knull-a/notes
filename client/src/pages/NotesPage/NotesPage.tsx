@@ -1,7 +1,12 @@
 import type { Note } from "@/services/notes/types";
 
 import { useEffect } from "react";
-import { useQuery, useInfiniteQuery, useQueryClient, useMutation } from "@tanstack/react-query";
+import {
+  useQuery,
+  useInfiniteQuery,
+  useQueryClient,
+  useMutation,
+} from "@tanstack/react-query";
 import { SubmitHandler, useForm } from "react-hook-form";
 
 import { useRest } from "@/services";
@@ -14,8 +19,7 @@ import "./NotesPage.css";
 
 const NotesPage = () => {
   const api = useRest();
-  const queryClient = useQueryClient()
-
+  const queryClient = useQueryClient();
 
   const {
     data: pinnedNotes,
@@ -27,7 +31,7 @@ const NotesPage = () => {
     mutationFn: async (newNote: Note) => {
       return await api.notes.postNote(newNote);
     },
-    onSuccess: () => queryClient.invalidateQueries(["notes"])
+    onSuccess: () => queryClient.invalidateQueries(["notes"]),
   });
 
   const {
@@ -52,14 +56,16 @@ const NotesPage = () => {
 
   useEffect(() => {
     window.addEventListener("scroll", () => useHandleScroll(fetchNextPage));
-    return () => window.removeEventListener("scroll", () => useHandleScroll(fetchNextPage));
+    return () =>
+      window.removeEventListener("scroll", () =>
+        useHandleScroll(fetchNextPage)
+      );
   }, []);
 
-  const onSubmit: SubmitHandler<Note> = async (data) => {
-    mutate(data)
-    reset()
-  };
-
+  function onSubmit(data: Note) {
+    mutate(data);
+    reset();
+  }
 
   if (isNotesLoading || isPinnedLoading)
     return (
@@ -79,7 +85,11 @@ const NotesPage = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="border border-slightly-dark rounded-xl p-4 shadow-2xl max-w-xl m-auto"
       >
-        <NotesForm getValues={getValues} register={register} isLoading={isSubmitLoading}  />
+        <NotesForm
+          getValues={getValues}
+          register={register}
+          isLoading={isSubmitLoading}
+        />
       </form>
       <NotesList title="Pinned" notes={pinnedNotes} />
       <NotesList
