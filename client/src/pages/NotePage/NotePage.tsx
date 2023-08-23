@@ -36,7 +36,7 @@ const NotePage = () => {
     defaultValues: note
   });
 
-  function closeModal() {
+  function handleCloseModal() {
     const parentPath = pathname.substring(0, pathname.lastIndexOf("/"));
     if (parentPath === "") return navigate("/");
     navigate(parentPath);
@@ -58,13 +58,15 @@ const NotePage = () => {
 
   return (
     <>
-      <CustomModal isVisible={modalVisible} setVisible={closeModal}>
+      <CustomModal isVisible={modalVisible} setVisible={handleCloseModal}>
         {note && !isNoteLoading && (
           <form onSubmit={handleSubmit(onSubmit)}>
             <NotesForm
               register={register}
               getValues={getValues}
               isLoading={isSubmitLoading}
+              closeModal={handleCloseModal}
+              isModal
             />
           </form>
         )}

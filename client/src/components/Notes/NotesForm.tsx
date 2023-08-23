@@ -15,9 +15,11 @@ type Props = {
   getValues: UseFormGetValues<Note>;
   register: UseFormRegister<Note>;
   isLoading: boolean;
+  isModal?: boolean;
+  closeModal?: () => void
 };
 
-export const NotesForm = ({ getValues, register, isLoading }: Props) => {
+export const NotesForm = ({ getValues, register, closeModal, isLoading, isModal }: Props) => {
   const [dots, setDots] = useState("");
   const [isPinned, setPinned] = useState(false);
   const formTitle = getValues('title')
@@ -34,13 +36,12 @@ export const NotesForm = ({ getValues, register, isLoading }: Props) => {
     const timer = setInterval(() => {
       setDots((prev) => (prev.length < 3 ? prev + "." : ""));
     }, 500);
-
     return () => clearInterval(timer);
   }, []);
 
   return (
     <>
-      {formText && (
+      {(isModal || formText) && (
         <div className="mb-4 flex gap-2 justify-between">
           <CustomInput<Note>
             name="title"
@@ -69,10 +70,10 @@ export const NotesForm = ({ getValues, register, isLoading }: Props) => {
           options={{ required: true }}
         />
       </div>
-      {formText && (
+      {(isModal || formText) && (
         <div className="flex gap-2 justify-end">
           <NotesButtonRow />
-          <CustomButton text="Cancel" />
+          <CustomButton text="Cancel" onClick={closeModal} />
           <CustomButton isLoading={isLoading} text="Save" type="submit" />
         </div>
       )}
