@@ -5,7 +5,11 @@ import { useState, useEffect } from "react";
 import Icon from "@mdi/react";
 import { mdiPin, mdiPinOutline } from "@mdi/js";
 
-import { UseFormGetValues, UseFormRegister } from "react-hook-form";
+import {
+  UseFormGetValues,
+  UseFormRegister,
+  UseFormSetValue,
+} from "react-hook-form";
 
 import { CustomInput } from "../Custom/CustomInput";
 import { CustomButton } from "../Custom/CustomButton";
@@ -13,23 +17,27 @@ import { NotesButtonRow } from "./NotesButtonRow";
 
 type Props = {
   getValues: UseFormGetValues<Note>;
+  setValue: UseFormSetValue<Note>;
   register: UseFormRegister<Note>;
   isLoading: boolean;
   isModal?: boolean;
-  closeModal?: () => void
+  closeModal?: () => void;
 };
 
-export const NotesForm = ({ getValues, register, closeModal, isLoading, isModal }: Props) => {
+export const NotesForm = ({
+  getValues,
+  register,
+  closeModal,
+  isLoading,
+  isModal,
+  setValue
+}: Props) => {
   const [dots, setDots] = useState("");
-  const [isPinned, setPinned] = useState(false);
-  const formTitle = getValues('title')
-  const formText = getValues('text')
-  const isFormPinned = getValues('isPinned')
+  const isFormPinned = getValues("isPinned");
+  const formText = getValues("text");
 
   const handlePinned = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPinned(e.target.checked);
-    // formValues.isPinned = e.target.checked;
-    console.log(isPinned, getValues());
+    setValue('isPinned', e.target.checked)
   };
 
   useEffect(() => {
@@ -52,12 +60,13 @@ export const NotesForm = ({ getValues, register, closeModal, isLoading, isModal 
             className="absolute top-0 left-0"
             id="isPinned"
             type="checkbox"
-            checked={isPinned}
+            checked={isFormPinned}
             {...register("isPinned")}
             onChange={handlePinned}
+            hidden
           />
           <label htmlFor="isPinned" className="btn">
-            <Icon path={isPinned ? mdiPin : mdiPinOutline} size={1} />
+            <Icon path={isFormPinned ? mdiPin : mdiPinOutline} size={1} />
           </label>
         </div>
       )}

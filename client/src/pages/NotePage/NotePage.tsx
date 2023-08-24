@@ -32,7 +32,7 @@ const NotePage = () => {
 
   const modalVisible = pathname.includes(`/notes/${id}`);
 
-  const { register, handleSubmit, getValues, reset } = useForm<Note>({
+  const { register, handleSubmit, getValues, reset, setValue } = useForm<Note>({
     defaultValues: note
   });
 
@@ -64,6 +64,7 @@ const NotePage = () => {
             <NotesForm
               register={register}
               getValues={getValues}
+              setValue={setValue}
               isLoading={isSubmitLoading}
               closeModal={handleCloseModal}
               isModal
