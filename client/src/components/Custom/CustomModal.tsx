@@ -4,10 +4,16 @@ import classNames from "classnames";
 type Props = {
   children?: React.ReactNode;
   isVisible: boolean;
+  hasCloseIcon?: boolean;
   setVisible: () => void;
 };
 
-const CustomModal = ({ children, isVisible, setVisible }: Props) => {
+const CustomModal = ({
+  children,
+  isVisible,
+  setVisible,
+  hasCloseIcon,
+}: Props) => {
   const modal = classNames({
     fixed: true,
     "top-0 bottom-0 right-0 left-0 hidden": !isVisible,
@@ -23,14 +29,16 @@ const CustomModal = ({ children, isVisible, setVisible }: Props) => {
   return (
     <>
       <div className={modal}>
-        <div className="float-right">
-          <button onClick={() => setVisible()}>X</button>
-        </div>
+        {hasCloseIcon && (
+          <div className="float-right">
+            <button onClick={setVisible}>X</button>
+          </div>
+        )}
         <div className="p-6 bg-dark border border-slightly-dark rounded-2xl min-w-[250px]">
           {children}
         </div>
       </div>
-      <div className={overlay}></div>
+      <div onClick={setVisible} className={overlay}></div>
     </>
   );
 };

@@ -3,8 +3,6 @@ import { useRest } from "@/services";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import CustomModal from "@/components/Custom/CustomModal";
-import { CustomLoader } from "@/components/Custom/CustomLoader";
-import { CustomInput } from "@/components/Custom/CustomInput";
 import { NotesForm } from "@/components/Notes/NotesForm";
 import { useForm } from "react-hook-form";
 import { Note } from "@/services/notes/types";
@@ -21,6 +19,7 @@ const NotePage = () => {
     data: note,
     isLoading: isNoteLoading,
     isError: hasNoteError,
+    refetch: refetchNote
   } = useQuery(["note"], async () => await api.notes.getNote(id as string));
 
   const { mutate, isLoading: isSubmitLoading } = useMutation({
@@ -33,7 +32,7 @@ const NotePage = () => {
   const modalVisible = pathname.includes(`/notes/${id}`);
 
   const { register, handleSubmit, getValues, reset, setValue } = useForm<Note>({
-    defaultValues: note
+    defaultValues: note,
   });
 
   function handleCloseModal() {
@@ -42,13 +41,11 @@ const NotePage = () => {
     navigate(parentPath);
   }
 
-  function onSubmit(data: Note) {
+  async function onSubmit(data: Note) {
     mutate(data);
+    await refetchNote()
+    handleCloseModal();
   }
-
-  useEffect(() => {
-    console.log("mounted", getValues());
-  }, [getValues()]);
 
   useEffect(() => {
     if (note) {

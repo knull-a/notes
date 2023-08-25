@@ -7,13 +7,15 @@ import {
 import classNames from "classnames";
 
 import Icon from "@mdi/react";
+import { Note } from "@/services/notes/types";
 
 type Props = {
   isCreated?: boolean;
   functionsList?: Function[];
+  note?: Note
 };
 
-export const NotesButtonRow = ({ isCreated, functionsList }: Props) => {
+export const NotesButtonRow = ({ isCreated, functionsList, note }: Props) => {
   const rowClasses = classNames({
     "buttons flex justify-center gap-6 mt-auto transition-opacity": true,
     "opacity-0": isCreated,
@@ -52,7 +54,7 @@ export const NotesButtonRow = ({ isCreated, functionsList }: Props) => {
           type="button"
           className="btn"
           key={label.id}
-          onClick={(e) => label.func && label.func(e)}
+          onClick={(e) => label.func && label.func(e, note)}
         >
           <Icon path={label.path} size={1} />
         </button>

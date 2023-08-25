@@ -7,7 +7,7 @@ import {
   useQueryClient,
   useMutation,
 } from "@tanstack/react-query";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
 import { useRest } from "@/services";
 import { CustomLoader } from "@/components/Custom/CustomLoader";
@@ -39,6 +39,7 @@ const NotesPage = () => {
     fetchNextPage,
     isLoading: isNotesLoading,
     isError: hasNotesError,
+    refetch: refetchNotes
   } = useInfiniteQuery(
     ["notes"],
     async ({ pageParam = 1 }) => api.notes.getNotes({ page: pageParam }),
@@ -52,7 +53,8 @@ const NotesPage = () => {
     }
   );
 
-  const { register, handleSubmit, getValues, reset } = useForm<Note>();
+  const { register, handleSubmit, getValues, reset, setValue } =
+    useForm<Note>();
 
   useEffect(() => {
     window.addEventListener("scroll", () => useHandleScroll(fetchNextPage));
@@ -62,8 +64,9 @@ const NotesPage = () => {
       );
   }, []);
 
-  function onSubmit(data: Note) {
+  async function onSubmit(data: Note) {
     mutate(data);
+    await refetchNotes()
     reset();
   }
 
@@ -76,16 +79,14 @@ const NotesPage = () => {
 
   if (hasNotesError || hasPinnedError) return <div>Query error</div>;
 
-  console.log(notes);
-  console.log(pinnedNotes);
-
   return (
     <>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="border border-slightly-dark rounded-xl p-4 shadow-2xl max-w-xl m-auto"
+        className="border border-slightly-dark rounded-xl p-4 shadow-2xl max-w-xl m-auto mb-4"
       >
         <NotesForm
+          setValue={setValue}
           getValues={getValues}
           register={register}
           isLoading={isSubmitLoading}

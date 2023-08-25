@@ -60,7 +60,7 @@ export const NotesForm = ({
             className="absolute top-0 left-0"
             id="isPinned"
             type="checkbox"
-            checked={isFormPinned}
+            checked={isFormPinned ?? false}
             {...register("isPinned")}
             onChange={handlePinned}
             hidden
