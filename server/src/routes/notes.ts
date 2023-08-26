@@ -3,19 +3,31 @@ import mongoose from "mongoose";
 import { Note } from "../database/schemas/Notes";
 import { Label } from "../database/schemas/Labels";
 
+type NoteQuery = {
+  limit?: string;
+  page?: string;
+  isPinned?: string;
+  isArchived?: string;
+  search?: string;
+  sort?: string;
+};
+
 const notesRoute = Router();
 
-export const getAllNotes = async (req: Request, res: Response) => {
+export const getAllNotes = async (
+  req: Request<{}, {}, {}, NoteQuery>,
+  res: Response
+) => {
   try {
-    const limit = parseInt(req.query.limit as string) || 10;
-    const page = parseInt(req.query.page as string) || 1;
-    const isPinnedQuery = !!req.query.isPinned
-    const isArchivedQuery = !!req.query.isArchived
-    
+    const limit = parseInt(req.query.limit || '10');
+    const page = parseInt(req.query.page || '1');
+    const isPinnedQuery = !!req.query.isPinned;
+    const isArchivedQuery = !!req.query.isArchived;
+
     const skip = (page - 1) * limit;
     const searchParam =
-    typeof req.query.search === "string" ? req.query.search : "";
-    
+      typeof req.query.search === "string" ? req.query.search : "";
+
     const notesQuery = {
       $or: [
         { title: new RegExp(searchParam, "i") },
@@ -24,8 +36,7 @@ export const getAllNotes = async (req: Request, res: Response) => {
       isArchived: isArchivedQuery,
       isPinned: isPinnedQuery,
     };
-    console.log(notesQuery)
-    
+
     const noteCountQuery = {
       $or: [
         { title: new RegExp(searchParam, "i") },
@@ -38,9 +49,9 @@ export const getAllNotes = async (req: Request, res: Response) => {
     const notes = await Note.find(notesQuery)
       .skip(skip)
       .limit(limit)
-      .populate("labels");
+      .populate("labels")
+      .sort(req.query.sort);
 
-    
     const notesCount = await Note.count(noteCountQuery);
 
     const totalPages = Math.ceil(notesCount / limit);
