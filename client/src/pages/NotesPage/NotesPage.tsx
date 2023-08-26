@@ -92,10 +92,11 @@ const NotesPage = () => {
           isLoading={isSubmitLoading}
         />
       </form>
-      <NotesList title="Pinned" notes={pinnedNotes} />
+      <NotesList title="Pinned" notes={pinnedNotes} refetch={refetchNotes} />
       <NotesList
         title="Other notes"
         notes={notes.pages.map((page) => page.data).flat()}
+        refetch={refetchNotes}
       />
     </>
   );

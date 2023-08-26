@@ -8,24 +8,27 @@ import classNames from "classnames";
 
 import Icon from "@mdi/react";
 import { Note } from "@/services/notes/types";
+import { UseFormRegister } from "react-hook-form";
 
 type Props = {
   isCreated?: boolean;
-  functionsList?: Function[];
-  note?: Note
+  functionsList?: any[];
+  note?: Note;
+  register?: UseFormRegister<any>; // temp
 };
 
-export const NotesButtonRow = ({ isCreated, functionsList, note }: Props) => {
+export const NotesButtonRow = ({
+  isCreated,
+  functionsList,
+  note,
+  register,
+}: Props) => {
   const rowClasses = classNames({
     "buttons flex justify-center gap-6 mt-auto transition-opacity": true,
     "opacity-0": isCreated,
   });
 
   const labelList = [
-    {
-      id: 1,
-      path: mdiPaletteOutline,
-    },
     {
       id: 2,
       path: mdiImageOutline,
@@ -43,12 +46,23 @@ export const NotesButtonRow = ({ isCreated, functionsList, note }: Props) => {
   const mergedLabelList = labelList.map((item, index) => {
     return {
       ...item,
-      func: functionsList && functionsList[index],
+      func: functionsList && functionsList[index + 1],
     };
   });
 
   return (
     <div className={rowClasses}>
+      <label onClick={(e) => e.stopPropagation()}>
+        <input
+          className="absolute opacity-0 pointer-events-none bottom-0"
+          type="color"
+          onChange={(e) => functionsList && functionsList[0](e, note)}
+          {...(register && register("color"))}
+        />
+        <div className="btn">
+          <Icon path={mdiPaletteOutline} size={1} />
+        </div>
+      </label>
       {mergedLabelList.map((label) => (
         <button
           type="button"

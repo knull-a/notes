@@ -6,16 +6,27 @@ import { useNavbarStore } from "@/stores/navbar";
 import { Link, useLocation } from "react-router-dom";
 import Icon from "@mdi/react";
 import { NotesButtonRow } from "./NotesButtonRow";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  InfiniteData,
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useRest } from "@/services";
 import { mdiPin, mdiPinOutline } from "@mdi/js";
+import { WithPage } from "@/services/types";
 
 type Props = {
   notes: Note[];
   title?: string;
+  refetch: <TPageData>(
+    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
+  ) => Promise<QueryObserverResult<InfiniteData<WithPage<Note[]>>, unknown>>;
 };
 
-export const NotesList = ({ notes, title }: Props) => {
+export const NotesList = ({ notes, title, refetch }: Props) => {
   const { isColumn } = useNavbarStore();
   const noteClasses = (note: Note) =>
     classNames({
@@ -37,23 +48,22 @@ export const NotesList = ({ notes, title }: Props) => {
 
   const { mutate: edit } = useMutation({
     mutationFn: async (newNote: Note) => {
-      return await api.pinned.patchPinnedNote(
-        { isArchived: !newNote.isArchived },
-        newNote._id
-      );
+      return await api.notes.patchNote(newNote, newNote._id);
     },
     onSuccess: () => queryClient.invalidateQueries(["notes"]),
   });
 
   const location = useLocation();
 
-  const showColorChange = (
-    e: React.MouseEvent<HTMLLabelElement, MouseEvent>,
+  async function showColorChange(
+    e: React.ChangeEvent<HTMLInputElement>,
     note: Note
-  ) => {
-    console.log("showColorChange", note._id);
-    e.preventDefault();
-  };
+  ) {
+    setTimeout(() => {
+      console.log("showColorChange", e.target.value);
+      edit({ ...note, color: e.target.value });
+    }, 2000);
+  }
 
   async function changeImage(
     e: React.MouseEvent<HTMLLabelElement, MouseEvent>,
@@ -69,19 +79,19 @@ export const NotesList = ({ notes, title }: Props) => {
   ) {
     console.log("archiveImage", note._id);
     e.preventDefault();
-    edit(note);
-    await api.notes.getNotes({ page: 1 });
+    edit({ ...note, isArchived: !note.isArchived });
+    await refetch();
   }
 
-  const deleteNote = async (
+  async function deleteNote(
     e: React.MouseEvent<HTMLLabelElement, MouseEvent>,
     note: Note
-  ) => {
+  ) {
     e.preventDefault();
     console.log("deleteNote", note._id);
     remove(note._id);
-    await api.notes.getNotes({ page: 1 });
-  };
+    await refetch();
+  }
 
   const containerClasses = (isPinned?: boolean) =>
     classNames({
