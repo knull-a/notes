@@ -9,25 +9,30 @@ export const getAllNotes = async (req: Request, res: Response) => {
   try {
     const limit = parseInt(req.query.limit as string) || 10;
     const page = parseInt(req.query.page as string) || 1;
-
+    const isPinnedQuery = !!req.query.isPinned
+    const isArchivedQuery = !!req.query.isArchived
+    
     const skip = (page - 1) * limit;
     const searchParam =
-      typeof req.query.search === "string" ? req.query.search : "";
-
+    typeof req.query.search === "string" ? req.query.search : "";
+    
     const notesQuery = {
       $or: [
         { title: new RegExp(searchParam, "i") },
         { text: new RegExp(searchParam, "i") },
       ],
-      isArchived: false,
-      isPinned: false,
+      isArchived: isArchivedQuery,
+      isPinned: isPinnedQuery,
     };
-
+    console.log(notesQuery)
+    
     const noteCountQuery = {
       $or: [
         { title: new RegExp(searchParam, "i") },
         { text: new RegExp(searchParam, "i") },
       ],
+      isArchived: isArchivedQuery,
+      isPinned: isPinnedQuery,
     };
 
     const notes = await Note.find(notesQuery)
