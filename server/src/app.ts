@@ -1,4 +1,4 @@
-import express, {json, Request, Response, urlencoded } from "express";
+import express, {json, urlencoded } from "express";
 import cookieParser from "cookie-parser"
 import MongoStore from "connect-mongo"
 import session from "express-session"
@@ -8,9 +8,7 @@ import cors from "cors"
 import "./database"
 
 import notesRoute from "./routes/notes";
-import archiveRoute from "./routes/archive"
 import labelRoute from "./routes/label";
-import pinnedRoute from "./routes/pinned";
 
 dotenv.config()
 
@@ -21,8 +19,8 @@ const port = 3001;
 app.use(json())
 app.use(urlencoded())
 app.use(cors())
-
 app.use(cookieParser())
+
 app.use(
   session({
     secret: process.env.SECRET_KEY || "",
@@ -35,8 +33,6 @@ app.use(
 );
 
 app.use("/api/v1/notes", notesRoute)
-app.use("/api/v1/archive", archiveRoute)
-app.use("/api/v1/pinned", pinnedRoute)
 app.use("/api/v1/label", labelRoute)
 
 app.listen(port, () => console.log(`App is listening on http://localhost:${port} !`));

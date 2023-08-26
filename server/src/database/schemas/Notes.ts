@@ -34,11 +34,8 @@ const NoteSchema = new mongoose.Schema({
     required: true,
     default: false,
   },
-  createdAt: {
-    type: mongoose.SchemaTypes.Date,
-    required: true,
-    default: new Date(),
-  },
+}, {
+  timestamps: true
 });
 
 export const Note = mongoose.model("note", NoteSchema);

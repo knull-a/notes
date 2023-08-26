@@ -11,6 +11,8 @@ const LabelSchema = new mongoose.Schema({
     type: mongoose.SchemaTypes.ObjectId,
     ref: 'note'
   }]
+}, {
+  timestamps: true
 })
 
 export const Label = mongoose.model("label", LabelSchema)
