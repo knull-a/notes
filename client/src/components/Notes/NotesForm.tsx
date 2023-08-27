@@ -51,7 +51,7 @@ export const NotesForm = ({
     <>
       {(isModal || formText) && (
         <div className="mb-4 flex gap-2 justify-between">
-          <CustomInput<Note>
+          <CustomInput
             name="title"
             register={register}
             placeholder="Enter title"
@@ -71,7 +71,7 @@ export const NotesForm = ({
         </div>
       )}
       <div>
-        <CustomInput<Note>
+        <CustomInput
           name="text"
           register={register}
           isTextarea

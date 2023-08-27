@@ -18,7 +18,6 @@ const NotePage = () => {
   const {
     data: note,
     isLoading: isNoteLoading,
-    isError: hasNoteError,
     refetch: refetchNote
   } = useQuery(["note"], async () => await api.notes.getNote(id as string));
 

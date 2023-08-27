@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
-import { Path, RegisterOptions, UseFormRegister } from "react-hook-form";
-type Props<T> = {
+import { RegisterOptions, UseFormRegister } from "react-hook-form";
+type Props = {
   isTextarea?: boolean;
   placeholder?: string;
   type?: string;
@@ -11,7 +11,7 @@ type Props<T> = {
   onChange?: any;
 };
 
-export function CustomInput<T = any>({
+export function CustomInput({
   isTextarea,
   register,
   options,
@@ -19,7 +19,7 @@ export function CustomInput<T = any>({
   name,
   onChange,
   ...props
-}: Props<T>) {
+}: Props) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
