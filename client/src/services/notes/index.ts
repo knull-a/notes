@@ -8,7 +8,7 @@ export class NotesRest extends BaseRest {
     super(endpoint);
   }
 
-  public getNotes(params: object) {
+  public getNotes(params?: object) {
     return this.get<WithPage<Note[]>>("/notes/", {
       params,
     });

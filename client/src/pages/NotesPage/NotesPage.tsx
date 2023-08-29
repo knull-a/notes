@@ -16,6 +16,7 @@ import { NotesForm } from "@/components/Notes/NotesForm";
 import { useHandleScroll } from "@/hooks/useHandleScroll";
 
 import "./NotesPage.css";
+import { usePinnedNotes } from "@/services/notes/hooks/usePinnedNotes";
 
 const NotesPage = () => {
   const api = useRest();
@@ -52,16 +53,12 @@ const NotesPage = () => {
     isLoading: isPinnedLoading,
     isError: hasPinnedError,
     refetch: refetchPinned,
-  } = useQuery(
-    ["pinnedNotes"],
-    async () => await api.notes.getNotes({ isPinned: true })
-  );
+  } = usePinnedNotes()
 
   const { register, handleSubmit, getValues, reset, setValue } =
     useForm<Note>();
 
   useEffect(() => {
-    console.log(pinnedNotes, notes);
     window.addEventListener("scroll", () => useHandleScroll(fetchNextPage));
     return () =>
       window.removeEventListener("scroll", () =>
@@ -98,7 +95,6 @@ const NotesPage = () => {
             isLoading={isSubmitLoading}
           />
         </form>
-        {pinnedNotes && pinnedNotes.data.flat()[0].text}
         {pinnedNotes.data !== undefined && (
           <NotesList
             title="Pinned"

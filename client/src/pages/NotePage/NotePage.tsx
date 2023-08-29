@@ -7,6 +7,8 @@ import { NotesForm } from "@/components/Notes/NotesForm";
 import { useForm } from "react-hook-form";
 import { Note } from "@/services/notes/types";
 import { useEffect } from "react";
+import { useNotes } from "@/services/notes/hooks/useNotes";
+import { usePinnedNotes } from "@/services/notes/hooks/usePinnedNotes";
 
 const NotePage = () => {
   const { id } = useParams();
@@ -18,7 +20,7 @@ const NotePage = () => {
   const {
     data: note,
     isLoading: isNoteLoading,
-    refetch: refetchNote
+    refetch: refetchNote,
   } = useQuery(["note"], async () => await api.notes.getNote(id as string));
 
   const { mutate, isLoading: isSubmitLoading } = useMutation({
@@ -34,6 +36,10 @@ const NotePage = () => {
     defaultValues: note,
   });
 
+  const { refetch: refetchPinnedNotes } = usePinnedNotes();
+
+  const { refetch: refetchNotes } = useNotes();
+
   function handleCloseModal() {
     const parentPath = pathname.substring(0, pathname.lastIndexOf("/"));
     if (parentPath === "") return navigate("/");
@@ -42,7 +48,9 @@ const NotePage = () => {
 
   async function onSubmit(data: Note) {
     mutate(data);
-    await refetchNote()
+    await refetchNote();
+    await refetchPinnedNotes();
+    await refetchNotes();
     handleCloseModal();
   }
 
