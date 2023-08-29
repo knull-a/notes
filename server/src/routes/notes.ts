@@ -21,8 +21,8 @@ export const getAllNotes = async (
   try {
     const limit = parseInt(req.query.limit || '10');
     const page = parseInt(req.query.page || '1');
-    const isPinnedQuery = !!req.query.isPinned;
-    const isArchivedQuery = !!req.query.isArchived;
+    const isPinnedQuery = !!req.query.isPinned || false;
+    const isArchivedQuery = !!req.query.isArchived || false;
 
     const skip = (page - 1) * limit;
     const searchParam =
@@ -50,7 +50,7 @@ export const getAllNotes = async (
       .skip(skip)
       .limit(limit)
       .populate("labels")
-      .sort(req.query.sort);
+      .sort(req.query.sort || 'updatedAt');
 
     const notesCount = await Note.count(noteCountQuery);
 
@@ -125,7 +125,7 @@ export const updateNoteById = async (req: Request, res: Response) => {
       session,
     });
 
-    if (updatedNote && noteToUpdate) {
+    if (updatedNote?.labels && noteToUpdate) {
       const addedLabels = updatedNote.labels.filter(
         (label) => !noteToUpdate.labels.includes(label)
       );

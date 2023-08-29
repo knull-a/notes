@@ -33,6 +33,6 @@ app.use(
 );
 
 app.use("/api/v1/notes", notesRoute)
-app.use("/api/v1/label", labelRoute)
+app.use("/api/v1/labels", labelRoute)
 
 app.listen(port, () => console.log(`App is listening on http://localhost:${port} !`));

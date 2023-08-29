@@ -1,10 +1,8 @@
 import axios from "axios"
 import { NotesRest } from "./notes"
-import { PinnedRest } from "./pinned"
 
 export class Rest {
   public readonly notes
-  public readonly pinned
 
   private endpoint
 
@@ -12,7 +10,6 @@ export class Rest {
     this.endpoint = this.createAxios()
 
     this.notes = new NotesRest(this.endpoint)
-    this.pinned = new PinnedRest(this.endpoint)
   }
 
   private createAxios() {

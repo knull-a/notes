@@ -2,10 +2,10 @@ import type { Note } from "@/services/notes/types";
 
 import { useEffect } from "react";
 import {
-  useQuery,
   useInfiniteQuery,
   useQueryClient,
   useMutation,
+  useQuery,
 } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
@@ -21,12 +21,6 @@ const NotesPage = () => {
   const api = useRest();
   const queryClient = useQueryClient();
 
-  const {
-    data: pinnedNotes,
-    isLoading: isPinnedLoading,
-    isError: hasPinnedError,
-  } = useQuery(["pinned"], async () => await api.pinned.getPinnedNotes());
-
   const { mutate, isLoading: isSubmitLoading } = useMutation({
     mutationFn: async (newNote: Note) => {
       return await api.notes.postNote(newNote);
@@ -39,7 +33,7 @@ const NotesPage = () => {
     fetchNextPage,
     isLoading: isNotesLoading,
     isError: hasNotesError,
-    refetch: refetchNotes
+    refetch: refetchNotes,
   } = useInfiniteQuery(
     ["notes"],
     async ({ pageParam = 1 }) => api.notes.getNotes({ page: pageParam }),
@@ -53,10 +47,21 @@ const NotesPage = () => {
     }
   );
 
+  const {
+    data: pinnedNotes,
+    isLoading: isPinnedLoading,
+    isError: hasPinnedError,
+    refetch: refetchPinned,
+  } = useQuery(
+    ["pinnedNotes"],
+    async () => await api.notes.getNotes({ isPinned: true })
+  );
+
   const { register, handleSubmit, getValues, reset, setValue } =
     useForm<Note>();
 
   useEffect(() => {
+    console.log(pinnedNotes, notes);
     window.addEventListener("scroll", () => useHandleScroll(fetchNextPage));
     return () =>
       window.removeEventListener("scroll", () =>
@@ -66,7 +71,7 @@ const NotesPage = () => {
 
   async function onSubmit(data: Note) {
     mutate(data);
-    await refetchNotes()
+    await refetchNotes();
     reset();
   }
 
@@ -80,25 +85,37 @@ const NotesPage = () => {
   if (hasNotesError || hasPinnedError) return <div>Query error</div>;
 
   return (
-    <>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="border border-slightly-dark rounded-xl p-4 shadow-2xl max-w-xl m-auto mb-4"
-      >
-        <NotesForm
-          setValue={setValue}
-          getValues={getValues}
-          register={register}
-          isLoading={isSubmitLoading}
+    notes && (
+      <>
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="border border-slightly-dark rounded-xl p-4 shadow-2xl max-w-xl m-auto mb-4"
+        >
+          <NotesForm
+            setValue={setValue}
+            getValues={getValues}
+            register={register}
+            isLoading={isSubmitLoading}
+          />
+        </form>
+        {pinnedNotes && pinnedNotes.data.flat()[0].text}
+        {pinnedNotes.data !== undefined && (
+          <NotesList
+            title="Pinned"
+            notes={pinnedNotes.data.flat()}
+            refetch={refetchPinned}
+          />
+        )}
+        <NotesList
+          title="Other notes"
+          notes={notes.pages
+            .map((page) => page.data)
+            .flat()
+            .filter((note) => !note.isPinned && !note.isArchived)}
+          refetch={refetchNotes}
         />
-      </form>
-      <NotesList title="Pinned" notes={pinnedNotes} refetch={refetchNotes} />
-      <NotesList
-        title="Other notes"
-        notes={notes.pages.map((page) => page.data).flat()}
-        refetch={refetchNotes}
-      />
-    </>
+      </>
+    )
   );
 };
 

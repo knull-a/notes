@@ -19,11 +19,9 @@ import { mdiPin, mdiPinOutline } from "@mdi/js";
 import { WithPage } from "@/services/types";
 
 type Props = {
-  notes: Note[];
+  notes?: Note[];
   title?: string;
-  refetch: <TPageData>(
-    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
-  ) => Promise<QueryObserverResult<InfiniteData<WithPage<Note[]>>, unknown>>;
+  refetch: any;
 };
 
 export const NotesList = ({ notes, title, refetch }: Props) => {
@@ -41,7 +39,7 @@ export const NotesList = ({ notes, title, refetch }: Props) => {
 
   const { mutate: remove } = useMutation({
     mutationFn: async (id: string) => {
-      return await api.pinned.deletePinnedNote(id);
+      return await api.notes.deleteNote(id);
     },
     onSuccess: () => queryClient.invalidateQueries(["notes"]),
   });
@@ -100,62 +98,66 @@ export const NotesList = ({ notes, title, refetch }: Props) => {
       "mb-6": isPinned,
     });
 
-  return (
-    notes && (
-      <div>
-        {title && (
-          <h2 className="uppercase text-sm ml-4 mb-2 font-medium text-gray-300">
-            {title}
-          </h2>
-        )}
-        <div className={containerClasses(true)}>
-          {notes.map((note) => (
-            <Link
-              to={`/notes/${note._id}`}
-              className={noteClasses(note)}
-              key={note._id}
-              state={{ previousLocation: location }}
-            >
-              <div className="absolute top-3 right-3 opacity-0 transition-opacity buttons">
-                <button className="btn">
-                  <Icon path={note.isPinned ? mdiPin : mdiPinOutline} />
-                </button>
-              </div>
-              {note.image && (
-                <img
-                  className="rounded-lg mb-2 max-w-sm m-auto"
-                  src={note.image}
-                  alt="Image"
-                />
-              )}
-              <h3 className="mb-2 font-medium">{note.title}</h3>
-              <p>{note.text}</p>
-              {note.labels && (
-                <div className="flex mt-2">
-                  {note.labels.map((label) => (
-                    <div
-                      className="border border-slightly-dark rounded-2xl py-1 px-4"
-                      key={label._id}
-                    >
-                      <div>{label.title}</div>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <NotesButtonRow
-                isCreated
-                note={note}
-                functionsList={[
-                  showColorChange,
-                  changeImage,
-                  archiveNote,
-                  deleteNote,
-                ]}
+  return notes ? (
+    <div>
+      {title && (
+        <h2 className="uppercase text-sm ml-4 mb-2 font-medium text-gray-300">
+          {title}
+        </h2>
+      )}
+      <div className={containerClasses(true)}>
+        {notes.map((note, idx) => (
+          <Link
+            to={`/notes/${note._id}`}
+            className={noteClasses(note)}
+            key={note._id + idx}
+            state={{ previousLocation: location }}
+          >
+            <div className="absolute top-3 right-3 opacity-0 transition-opacity buttons">
+              <button className="btn">
+                <Icon path={note.isPinned ? mdiPin : mdiPinOutline} />
+              </button>
+            </div>
+            {note.image && (
+              <img
+                className="rounded-lg mb-2 max-w-sm m-auto"
+                src={note.image}
+                alt="Image"
               />
-            </Link>
-          ))}
-        </div>
+            )}
+            <h3 className="mb-2 font-medium">{note.title}</h3>
+            <p>{note.text}</p>
+            {note.labels && (
+              <div className="flex mt-2">
+                {note.labels.map((label) => (
+                  <div
+                    className="border border-slightly-dark rounded-2xl py-1 px-4"
+                    key={label._id}
+                  >
+                    <div>{label.title}</div>
+                  </div>
+                ))}
+              </div>
+            )}
+            <NotesButtonRow
+              isCreated
+              note={note}
+              functionsList={[
+                showColorChange,
+                changeImage,
+                archiveNote,
+                deleteNote,
+              ]}
+            />
+          </Link>
+        ))}
       </div>
-    )
+    </div>
+  ) : (
+    <>
+      <div className="flex items-center justify-center w-screen h-screen">
+        List is empty
+      </div>
+    </>
   );
 };
