@@ -10,9 +10,10 @@ import { NotePageAsync } from "@/pages/NotePage/NotePage.async";
 export const AppRoutes = () => {
   const location = useLocation();
 
-  const {state: locationState} =  location
+  const { state: locationState } = location;
 
-  const previousLocation = locationState?.previousLocation || window.location.pathname;
+  const previousLocation =
+    locationState?.previousLocation || window.location.pathname;
 
   return (
     <Suspense
@@ -24,7 +25,7 @@ export const AppRoutes = () => {
     >
       <Routes location={previousLocation || location}>
         <Route path="/" element={<Navigate to={"/notes"} replace />} />
-        <Route path="/notes" element={<NotesPageAsync />} />
+        <Route path="/notes" element={<NotesPageAsync />}></Route>
         <Route path="test" element={<TestPageAsync />} />
       </Routes>
       {previousLocation && (

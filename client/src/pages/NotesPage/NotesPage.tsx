@@ -37,7 +37,7 @@ const NotesPage = () => {
     refetch: refetchNotes,
   } = useInfiniteQuery(
     ["notes"],
-    async ({ pageParam = 1 }) => api.notes.getNotes({ page: pageParam }),
+    async ({ pageParam = 1 }) => await api.notes.getNotes({ page: pageParam, sort: "-updatedAt" }),
     {
       getNextPageParam: (lastPage) => {
         if (lastPage.paging.currentPage < lastPage.paging.pages)

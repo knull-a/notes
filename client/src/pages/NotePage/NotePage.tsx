@@ -23,6 +23,10 @@ const NotePage = () => {
     refetch: refetchNote,
   } = useQuery(["note"], async () => await api.notes.getNote(id as string));
 
+  const { refetch: refetchPinnedNotes } = usePinnedNotes();
+
+  const { refetch: refetchNotes } = useNotes();
+  
   const { mutate, isLoading: isSubmitLoading } = useMutation({
     mutationFn: async (newNote: Note) => {
       return await api.notes.patchNote(newNote, String(note?._id));
@@ -36,9 +40,6 @@ const NotePage = () => {
     defaultValues: note,
   });
 
-  const { refetch: refetchPinnedNotes } = usePinnedNotes();
-
-  const { refetch: refetchNotes } = useNotes();
 
   function handleCloseModal() {
     const parentPath = pathname.substring(0, pathname.lastIndexOf("/"));
@@ -49,8 +50,8 @@ const NotePage = () => {
   async function onSubmit(data: Note) {
     mutate(data);
     await refetchNote();
-    await refetchPinnedNotes();
     await refetchNotes();
+    await refetchPinnedNotes();
     handleCloseModal();
   }
 

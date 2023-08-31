@@ -1,10 +1,11 @@
 import { useRest } from "@/services";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 const api = useRest();
 
 export const useNotes = () =>
-  useQuery(
+  useInfiniteQuery(
     ["notes"],
-    async () => await api.notes.getNotes()
+    async ({ pageParam = 1 }) =>
+      await api.notes.getNotes({ page: pageParam, sort: "-updatedAt" })
   );
