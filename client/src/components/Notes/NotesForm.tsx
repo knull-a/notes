@@ -3,7 +3,7 @@ import type { Note } from "@/services/notes/types";
 import { useState, useEffect } from "react";
 
 import Icon from "@mdi/react";
-import { mdiPin, mdiPinOutline } from "@mdi/js";
+import { mdiPaletteOutline, mdiPin, mdiPinOutline } from "@mdi/js";
 
 import {
   UseFormGetValues,
@@ -30,14 +30,15 @@ export const NotesForm = ({
   closeModal,
   isLoading,
   isModal,
-  setValue
+  setValue,
 }: Props) => {
   const [dots, setDots] = useState("");
   const isFormPinned = getValues("isPinned");
   const formText = getValues("text");
+  const note = getValues();
 
   const handlePinned = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue('isPinned', e.target.checked)
+    setValue("isPinned", e.target.checked);
   };
 
   useEffect(() => {
@@ -78,10 +79,24 @@ export const NotesForm = ({
           placeholder={`Note${dots}`}
           options={{ required: true }}
         />
+        <CustomInput name="color" register={register} />
       </div>
       {(isModal || formText) && (
         <div className="flex gap-2 justify-end">
-          <NotesButtonRow />
+          <div className="buttons flex justify-center gap-6 mt-auto transition-opacity">
+            <label onClick={(e) => e.stopPropagation()}>
+              <input
+                className="absolute opacity-0 pointer-events-none bottom-0"
+                type="color"
+                onChange={(e) => setValue("color", e.target.value)}
+                {...(register && register("color"))}
+              />
+              <div className="btn">
+                <Icon path={mdiPaletteOutline} size={1} />
+              </div>
+            </label>
+            <NotesButtonRow note={note} />
+          </div>
           <CustomButton text="Cancel" onClick={closeModal} />
           <CustomButton isLoading={isLoading} text="Save" type="submit" />
         </div>

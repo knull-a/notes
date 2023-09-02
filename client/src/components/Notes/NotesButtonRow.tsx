@@ -9,11 +9,16 @@ import classNames from "classnames";
 import Icon from "@mdi/react";
 import { Note } from "@/services/notes/types";
 import { UseFormRegister } from "react-hook-form";
+import {
+  useDeleteNote,
+  useEditNote,
+} from "@/services/notes/hooks/useMutateNote";
+import { useState } from "react";
 
 type Props = {
   isCreated?: boolean;
   functionsList?: any[];
-  note?: Note;
+  note: Note;
   register?: UseFormRegister<any>; // temp
 };
 
@@ -23,10 +28,15 @@ export const NotesButtonRow = ({
   note,
   register,
 }: Props) => {
+  const [colorValue, setColorValue] = useState("inherit");
+
   const rowClasses = classNames({
     "buttons flex justify-center gap-6 mt-auto transition-opacity": true,
     "opacity-0": isCreated,
   });
+
+  const { mutate: remove } = useDeleteNote();
+  const { mutate: edit } = useEditNote();
 
   const labelList = [
     {
@@ -50,19 +60,26 @@ export const NotesButtonRow = ({
     };
   });
 
+  async function changeColor(e: React.ChangeEvent<HTMLInputElement>) {
+    setColorValue(e.target.value);
+    console.log(colorValue, e.target.value);
+    
+  }
+
   return (
-    <div className={rowClasses}>
-      <label onClick={(e) => e.stopPropagation()}>
+    <>
+      {/* <label onClick={(e) => e.stopPropagation()}>
         <input
           className="absolute opacity-0 pointer-events-none bottom-0"
           type="color"
-          onChange={(e) => functionsList && functionsList[0](e, note)}
+          onChange={(e) => changeColor(e)}
+          value={colorValue}
           {...(register && register("color"))}
         />
         <div className="btn">
           <Icon path={mdiPaletteOutline} size={1} />
         </div>
-      </label>
+      </label> */}
       {mergedLabelList.map((label) => (
         <button
           type="button"
@@ -73,6 +90,6 @@ export const NotesButtonRow = ({
           <Icon path={label.path} size={1} />
         </button>
       ))}
-    </div>
+    </>
   );
 };

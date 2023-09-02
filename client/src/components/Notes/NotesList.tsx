@@ -17,6 +17,10 @@ import {
 import { useRest } from "@/services";
 import { mdiPin, mdiPinOutline } from "@mdi/js";
 import { WithPage } from "@/services/types";
+import {
+  useDeleteNote,
+  useEditNote,
+} from "@/services/notes/hooks/useMutateNote";
 
 type Props = {
   notes?: Note[];
@@ -33,35 +37,10 @@ export const NotesList = ({ notes, title, refetch }: Props) => {
       [`bg-[${note.color}]`]: note.color,
     });
 
-  const queryClient = useQueryClient();
-
-  const api = useRest();
-
-  const { mutate: remove } = useMutation({
-    mutationFn: async (id: string) => {
-      return await api.notes.deleteNote(id);
-    },
-    onSuccess: () => queryClient.invalidateQueries(["notes"]),
-  });
-
-  const { mutate: edit } = useMutation({
-    mutationFn: async (newNote: Note) => {
-      return await api.notes.patchNote(newNote, newNote._id);
-    },
-    onSuccess: () => queryClient.invalidateQueries(["notes"]),
-  });
+  const { mutate: remove } = useDeleteNote();
+  const { mutate: edit } = useEditNote();
 
   const location = useLocation();
-
-  async function showColorChange(
-    e: React.ChangeEvent<HTMLInputElement>,
-    note: Note
-  ) {
-    setTimeout(() => {
-      console.log("showColorChange", e.target.value);
-      edit({ ...note, color: e.target.value });
-    }, 2000);
-  }
 
   async function changeImage(
     e: React.MouseEvent<HTMLLabelElement, MouseEvent>,
@@ -139,16 +118,6 @@ export const NotesList = ({ notes, title, refetch }: Props) => {
                 ))}
               </div>
             )}
-            <NotesButtonRow
-              isCreated
-              note={note}
-              functionsList={[
-                showColorChange,
-                changeImage,
-                archiveNote,
-                deleteNote,
-              ]}
-            />
           </Link>
         ))}
       </div>
