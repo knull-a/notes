@@ -21,6 +21,7 @@ import {
   useDeleteNote,
   useEditNote,
 } from "@/services/notes/hooks/useMutateNote";
+import { NotesItem } from "./NotesItem";
 
 type Props = {
   notes?: Note[];
@@ -30,11 +31,12 @@ type Props = {
 
 export const NotesList = ({ notes, title, refetch }: Props) => {
   const { isColumn } = useNavbarStore();
-  const noteClasses = (note: Note) =>
+
+  const containerClasses = (isPinned?: boolean) =>
     classNames({
-      "block break-inside border border-slightly-dark p-3 cursor-default break-all mb-6 notes rounded-lg transition-all relative":
-        true,
-      [`bg-[${note.color}]`]: note.color,
+      "gap-6 transition-all": true,
+      "masonry-3": !isColumn,
+      "mb-6": isPinned,
     });
 
   const { mutate: remove } = useDeleteNote();
@@ -70,13 +72,6 @@ export const NotesList = ({ notes, title, refetch }: Props) => {
     await refetch();
   }
 
-  const containerClasses = (isPinned?: boolean) =>
-    classNames({
-      "gap-6 transition-all": true,
-      "masonry-3": !isColumn,
-      "mb-6": isPinned,
-    });
-
   return notes ? (
     <div>
       {title && (
@@ -88,36 +83,12 @@ export const NotesList = ({ notes, title, refetch }: Props) => {
         {notes.map((note, idx) => (
           <Link
             to={`/notes/${note._id}`}
-            className={noteClasses(note)}
+            className="block break-inside border border-slightly-dark p-3 cursor-default break-all mb-6 notes rounded-lg transition-all relative"
+            style={{ backgroundColor: `${note.color}` }}
             key={note._id + idx}
             state={{ previousLocation: location }}
           >
-            <div className="absolute top-3 right-3 opacity-0 transition-opacity buttons">
-              <button className="btn">
-                <Icon path={note.isPinned ? mdiPin : mdiPinOutline} />
-              </button>
-            </div>
-            {note.image && (
-              <img
-                className="rounded-lg mb-2 max-w-sm m-auto"
-                src={note.image}
-                alt="Image"
-              />
-            )}
-            <h3 className="mb-2 font-medium">{note.title}</h3>
-            <p>{note.text}</p>
-            {note.labels && (
-              <div className="flex mt-2">
-                {note.labels.map((label) => (
-                  <div
-                    className="border border-slightly-dark rounded-2xl py-1 px-4"
-                    key={label._id}
-                  >
-                    <div>{label.title}</div>
-                  </div>
-                ))}
-              </div>
-            )}
+            <NotesItem note={note} />
           </Link>
         ))}
       </div>

@@ -40,15 +40,15 @@ export const NotesButtonRow = ({
 
   const labelList = [
     {
-      id: 2,
+      id: 1,
       path: mdiImageOutline,
     },
     {
-      id: 3,
+      id: 2,
       path: mdiArchiveArrowDownOutline,
     },
     {
-      id: 4,
+      id: 3,
       path: mdiDeleteOutline,
     },
   ];
@@ -56,30 +56,12 @@ export const NotesButtonRow = ({
   const mergedLabelList = labelList.map((item, index) => {
     return {
       ...item,
-      func: functionsList && functionsList[index + 1],
+      func: functionsList && functionsList[index],
     };
   });
 
-  async function changeColor(e: React.ChangeEvent<HTMLInputElement>) {
-    setColorValue(e.target.value);
-    console.log(colorValue, e.target.value);
-    
-  }
-
   return (
     <>
-      {/* <label onClick={(e) => e.stopPropagation()}>
-        <input
-          className="absolute opacity-0 pointer-events-none bottom-0"
-          type="color"
-          onChange={(e) => changeColor(e)}
-          value={colorValue}
-          {...(register && register("color"))}
-        />
-        <div className="btn">
-          <Icon path={mdiPaletteOutline} size={1} />
-        </div>
-      </label> */}
       {mergedLabelList.map((label) => (
         <button
           type="button"

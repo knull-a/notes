@@ -9,6 +9,7 @@ import { Note } from "@/services/notes/types";
 import { useEffect } from "react";
 import { useNotes } from "@/services/notes/hooks/useNotes";
 import { usePinnedNotes } from "@/services/notes/hooks/usePinnedNotes";
+import useModalStore from "@/stores/modal";
 
 const NotePage = () => {
   const { id } = useParams();
@@ -26,7 +27,7 @@ const NotePage = () => {
   const { refetch: refetchPinnedNotes } = usePinnedNotes();
 
   const { refetch: refetchNotes } = useNotes();
-  
+
   const { mutate, isLoading: isSubmitLoading } = useMutation({
     mutationFn: async (newNote: Note) => {
       return await api.notes.patchNote(newNote, String(note?._id));
@@ -40,7 +41,8 @@ const NotePage = () => {
     defaultValues: note,
   });
 
-
+  const { changeColor: changeColorState, color } = useModalStore();
+  
   function handleCloseModal() {
     const parentPath = pathname.substring(0, pathname.lastIndexOf("/"));
     if (parentPath === "") return navigate("/");
@@ -58,9 +60,12 @@ const NotePage = () => {
   useEffect(() => {
     if (note) {
       reset(note);
+      changeColorState(note.color);
+      console.log(note.color, color)
     }
   }, [note, reset]);
 
+  
   return (
     <>
       <CustomModal isVisible={modalVisible} setVisible={handleCloseModal}>

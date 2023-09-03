@@ -9,6 +9,7 @@ type Props = {
   options?: RegisterOptions;
   register?: UseFormRegister<any>; // temp
   onChange?: any;
+  hidden?: boolean
 };
 
 export function CustomInput({

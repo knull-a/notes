@@ -14,6 +14,7 @@ import {
 import { CustomInput } from "../Custom/CustomInput";
 import { CustomButton } from "../Custom/CustomButton";
 import { NotesButtonRow } from "./NotesButtonRow";
+import useModalStore from "@/stores/modal";
 
 type Props = {
   getValues: UseFormGetValues<Note>;
@@ -37,9 +38,16 @@ export const NotesForm = ({
   const formText = getValues("text");
   const note = getValues();
 
+  const { changeColor: changeColorState, color } = useModalStore();
+
   const handlePinned = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue("isPinned", e.target.checked);
   };
+
+  function changeColorValue(e: React.ChangeEvent<HTMLInputElement>) {
+    setValue("color", e.target.value);
+    changeColorState(e.target.value);
+  }
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -79,7 +87,7 @@ export const NotesForm = ({
           placeholder={`Note${dots}`}
           options={{ required: true }}
         />
-        <CustomInput name="color" register={register} />
+        <CustomInput name="color" register={register} hidden />
       </div>
       {(isModal || formText) && (
         <div className="flex gap-2 justify-end">
@@ -88,8 +96,8 @@ export const NotesForm = ({
               <input
                 className="absolute opacity-0 pointer-events-none bottom-0"
                 type="color"
-                onChange={(e) => setValue("color", e.target.value)}
                 {...(register && register("color"))}
+                onChange={(e) => changeColorValue(e)}
               />
               <div className="btn">
                 <Icon path={mdiPaletteOutline} size={1} />

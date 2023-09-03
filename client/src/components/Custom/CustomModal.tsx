@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import classNames from "classnames";
+import useModalStore from "@/stores/modal";
 
 type Props = {
   children?: React.ReactNode;
@@ -26,6 +27,12 @@ const CustomModal = ({
       isVisible,
   });
 
+  const { color } = useModalStore();
+
+  useEffect(() => {
+    console.log(color);
+  }, []);
+
   return (
     <>
       <div className={modal}>
@@ -34,7 +41,10 @@ const CustomModal = ({
             <button onClick={setVisible}>X</button>
           </div>
         )}
-        <div className="p-6 bg-dark border border-slightly-dark rounded-2xl min-w-[250px]">
+        <div
+          style={{ backgroundColor: color }}
+          className="p-6 bg-dark border border-slightly-dark rounded-2xl min-w-[250px]"
+        >
           {children}
         </div>
       </div>
