@@ -52,7 +52,7 @@ export const Sidebar = () => {
                 </Link>
               </li>
               <li>
-                <Link to={"/"} className="sidebar-item">
+                <Link to={"/archive"} className="sidebar-item">
                   <Icon path={mdiArchiveOutline} size={1} />
                   <span className="flex-1 ml-3 whitespace-nowrap">Archive</span>
                 </Link>

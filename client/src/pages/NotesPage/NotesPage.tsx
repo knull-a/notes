@@ -36,7 +36,11 @@ const NotesPage = () => {
     refetch: refetchNotes,
   } = useInfiniteQuery(
     ["notes"],
-    async ({ pageParam = 1 }) => await api.notes.getNotes({ page: pageParam, sort: "-updatedAt" }),
+    async ({ pageParam = 1 }) =>
+      await api.notes.getNotes({
+        page: pageParam,
+        sort: "-updatedAt",
+      }),
     {
       getNextPageParam: (lastPage) => {
         if (lastPage.paging.currentPage < lastPage.paging.pages)
@@ -52,7 +56,7 @@ const NotesPage = () => {
     isLoading: isPinnedLoading,
     isError: hasPinnedError,
     refetch: refetchPinned,
-  } = usePinnedNotes()
+  } = usePinnedNotes();
 
   const { register, handleSubmit, getValues, reset, setValue } =
     useForm<Note>();
@@ -96,17 +100,16 @@ const NotesPage = () => {
         </form>
         {pinnedNotes.data !== undefined && (
           <NotesList
+            parentPage="notes"
             title="Pinned"
             notes={pinnedNotes.data.flat()}
             refetch={refetchPinned}
           />
         )}
         <NotesList
+          parentPage="notes"
           title="Other notes"
-          notes={notes.pages
-            .map((page) => page.data)
-            .flat()
-            .filter((note) => !note.isPinned && !note.isArchived)}
+          notes={notes.pages.map((page) => page.data).flat()}
           refetch={refetchNotes}
         />
       </>

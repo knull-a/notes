@@ -27,9 +27,10 @@ type Props = {
   notes?: Note[];
   title?: string;
   refetch: any;
+  parentPage: string
 };
 
-export const NotesList = ({ notes, title, refetch }: Props) => {
+export const NotesList = ({ notes, title, refetch, parentPage }: Props) => {
   const { isColumn } = useNavbarStore();
 
   const containerClasses = (isPinned?: boolean) =>
@@ -82,7 +83,7 @@ export const NotesList = ({ notes, title, refetch }: Props) => {
       <div className={containerClasses(true)}>
         {notes.map((note, idx) => (
           <Link
-            to={`/notes/${note._id}`}
+            to={`/${parentPage}/${note._id}`}
             className="block break-inside border border-slightly-dark p-3 cursor-default break-all mb-6 notes rounded-lg transition-all relative"
             style={{ backgroundColor: `${note.color}` }}
             key={note._id + idx}
