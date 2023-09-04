@@ -23,5 +23,11 @@ module.exports = {
       { allowConstantExport: true },
     ],
     '@typescript-eslint/no-non-null-assertion': 'off',
+    'no-unused-vars': 'off',
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/require-await": "off",
+    "@typescript-eslint/restrict-plus-operands": "off"
+    
   },
+  ignorePatterns: ['.eslintrc.cjs'],
 }

@@ -38,7 +38,7 @@ export const NotesForm = ({
   const formText = getValues("text");
   const note = getValues();
 
-  const { changeColor: changeColorState, color } = useModalStore();
+  const { changeColor: changeColorState } = useModalStore();
 
   const handlePinned = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue("isPinned", e.target.checked);

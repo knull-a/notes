@@ -1,19 +1,12 @@
 import {
-  mdiPaletteOutline,
   mdiImageOutline,
   mdiArchiveArrowDownOutline,
   mdiDeleteOutline,
 } from "@mdi/js";
-import classNames from "classnames";
 
 import Icon from "@mdi/react";
 import { Note } from "@/services/notes/types";
 import { UseFormRegister } from "react-hook-form";
-import {
-  useDeleteNote,
-  useEditNote,
-} from "@/services/notes/hooks/useMutateNote";
-import { useState } from "react";
 
 type Props = {
   isCreated?: boolean;
@@ -23,20 +16,9 @@ type Props = {
 };
 
 export const NotesButtonRow = ({
-  isCreated,
   functionsList,
   note,
-  register,
 }: Props) => {
-  const [colorValue, setColorValue] = useState("inherit");
-
-  const rowClasses = classNames({
-    "buttons flex justify-center gap-6 mt-auto transition-opacity": true,
-    "opacity-0": isCreated,
-  });
-
-  const { mutate: remove } = useDeleteNote();
-  const { mutate: edit } = useEditNote();
 
   const labelList = [
     {

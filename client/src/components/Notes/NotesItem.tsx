@@ -1,9 +1,6 @@
 import { Note } from "@/services/notes/types";
-import useModalStore from "@/stores/modal";
 import { mdiPin, mdiPinOutline } from "@mdi/js";
 import Icon from "@mdi/react";
-import { useEffect } from "react";
-import { Link } from "react-router-dom";
 
 type Props = {
   note: Note;

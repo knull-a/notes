@@ -30,7 +30,7 @@ type Props = {
   parentPage: string
 };
 
-export const NotesList = ({ notes, title, refetch, parentPage }: Props) => {
+export const NotesList = ({ notes, title, parentPage, refetch }: Props) => {
   const { isColumn } = useNavbarStore();
 
   const containerClasses = (isPinned?: boolean) =>
