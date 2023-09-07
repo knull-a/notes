@@ -3,20 +3,8 @@ import type { Note } from "@/services/notes/types";
 import classNames from "classnames";
 
 import { useNavbarStore } from "@/stores/navbar";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import Icon from "@mdi/react";
-import { NotesButtonRow } from "./NotesButtonRow";
-import {
-  InfiniteData,
-  QueryObserverResult,
-  RefetchOptions,
-  RefetchQueryFilters,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { useRest } from "@/services";
-import { mdiPin, mdiPinOutline } from "@mdi/js";
-import { WithPage } from "@/services/types";
+import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+
 import {
   useDeleteNote,
   useEditNote,
@@ -93,6 +81,7 @@ export const NotesList = ({ notes, title, parentPage, refetch }: Props) => {
             <NotesItem note={note} />
           </Link>
         ))}
+        <Outlet />
       </div>
     </div>
   ) : (

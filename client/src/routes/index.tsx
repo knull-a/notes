@@ -1,7 +1,10 @@
-import React, { Suspense } from "react";
+import { Suspense } from "react";
 import { Route, Routes, Navigate, useLocation } from "react-router-dom";
 
 import { CustomLoader } from "@/components/Custom/CustomLoader";
+import ArchivePage from "@/pages/ArchivePage";
+import NotesPage from "@/pages/NotesPage";
+import NotePage from "@/pages/NotePage";
 
 export const AppRoutes = () => {
   const location = useLocation();
@@ -10,10 +13,6 @@ export const AppRoutes = () => {
 
   const previousLocation =
     locationState?.previousLocation || window.location.pathname;
-
-    const NotePage = React.lazy(() => import("@/pages/NotePage"))
-    const ArchivePage = React.lazy(() => import("@/pages/ArchivePage"))
-    const NotesPage = React.lazy(() => import("@/pages/NotesPage"))
 
   return (
     <Suspense

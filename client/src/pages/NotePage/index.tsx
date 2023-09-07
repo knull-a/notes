@@ -52,8 +52,6 @@ const NotePage = ({ pathName }: Props) => {
     onSuccess: () => queryClient.invalidateQueries([pathName]),  
   });
 
-  const modalVisible = pathname.includes(`/${pathName}/${id}`);
-
   const { register, handleSubmit, getValues, reset, setValue } = useForm<Note>({
     defaultValues: note,
   });
@@ -87,7 +85,7 @@ const NotePage = ({ pathName }: Props) => {
 
   return (
     <>
-      <CustomModal isVisible={modalVisible} setVisible={handleCloseModal}>
+      <CustomModal isVisible setVisible={handleCloseModal}>
         {note && !isNoteLoading && (
           <form onSubmit={handleSubmit(onSubmit)}>
             <NotesForm
