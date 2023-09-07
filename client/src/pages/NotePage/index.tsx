@@ -1,42 +1,55 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useRest } from "@/services";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  QueryObserverResult,
+  RefetchOptions,
+  RefetchQueryFilters,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 import CustomModal from "@/components/Custom/CustomModal";
 import { NotesForm } from "@/components/Notes/NotesForm";
 import { useForm } from "react-hook-form";
 import { Note } from "@/services/notes/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useInfiniteNotes } from "@/services/notes/hooks/useInfiniteNotes";
 import { useNotes } from "@/services/notes/hooks/useNotes";
-import { usePinnedNotes } from "@/services/notes/hooks/usePinnedNotes";
 import useModalStore from "@/stores/modal";
+import { PathName, WithPage } from "@/services/types";
+import path from "path";
 
 type Props = {
-  pathName: "notes" | "archive";
+  pathName: PathName;
 };
 
 const NotePage = ({ pathName }: Props) => {
   const { id } = useParams();
   const api = useRest();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const { pathname, state } = useLocation();
   const queryClient = useQueryClient();
 
-  const {
-    data: note,
-    isLoading: isNoteLoading,
-    refetch: refetchNote,
-  } = useQuery(["note"], async () => await api.notes.getNote(id as string));
+  const { data: note, isLoading: isNoteLoading } = useQuery(
+    ["note"],
+    async () => await api.notes.getNote(id as string)
+  );
 
-  const { refetch: refetchPinnedNotes } = usePinnedNotes();
+  const { refetch: refetchPinnedNotes } = useNotes("pinned", {
+    isPinned: true,
+  });
 
-  const { refetch: refetchNotes } = useNotes();
+  const { refetch: refetchNotes } = useInfiniteNotes(
+    pathName,
+    pathName === "archive" ? { isArchived: true } : {}
+  );
 
   const { mutate, isLoading: isSubmitLoading } = useMutation({
     mutationFn: async (newNote: Note) => {
       return await api.notes.patchNote(newNote, String(note?._id));
     },
-    onSuccess: () => queryClient.invalidateQueries(["notes"]),
+    onSuccess: () => queryClient.invalidateQueries([pathName]),  
   });
 
   const modalVisible = pathname.includes(`/${pathName}/${id}`);
@@ -55,9 +68,12 @@ const NotePage = ({ pathName }: Props) => {
 
   async function onSubmit(data: Note) {
     mutate(data);
-    await refetchNote();
+    console.log(pathName)
     await refetchNotes();
-    await refetchPinnedNotes();
+    if (pathName === "notes") {
+      console.log("if");
+      await refetchPinnedNotes();
+    }
     handleCloseModal();
   }
 
@@ -65,7 +81,7 @@ const NotePage = ({ pathName }: Props) => {
     if (note) {
       reset(note);
       changeColorState(note.color);
-      console.log(note.color, color);
+      console.log(note.color, color, pathName);
     }
   }, [note, reset]);
 

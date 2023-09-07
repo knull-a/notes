@@ -7,3 +7,5 @@ export type WithPage<T> = {
     pageSize: number;
   };
 };
+
+export type PathName = "notes" | "archive" | "pinned"

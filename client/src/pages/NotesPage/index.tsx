@@ -15,7 +15,8 @@ import { NotesForm } from "@/components/Notes/NotesForm";
 import { useHandleScroll } from "@/hooks/useHandleScroll";
 
 import "./NotesPage.css";
-import { usePinnedNotes } from "@/services/notes/hooks/usePinnedNotes";
+import { useNotes } from "@/services/notes/hooks/useNotes";
+import { ScrollRestoration } from "react-router-dom";
 
 const NotesPage = () => {
   const api = useRest();
@@ -56,7 +57,7 @@ const NotesPage = () => {
     isLoading: isPinnedLoading,
     isError: hasPinnedError,
     refetch: refetchPinned,
-  } = usePinnedNotes();
+  } = useNotes("pinned");
 
   const { register, handleSubmit, getValues, reset, setValue } =
     useForm<Note>();

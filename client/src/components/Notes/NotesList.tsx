@@ -3,7 +3,7 @@ import type { Note } from "@/services/notes/types";
 import classNames from "classnames";
 
 import { useNavbarStore } from "@/stores/navbar";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Icon from "@mdi/react";
 import { NotesButtonRow } from "./NotesButtonRow";
 import {
@@ -27,11 +27,13 @@ type Props = {
   notes?: Note[];
   title?: string;
   refetch: any;
-  parentPage: string
+  parentPage: string;
 };
 
 export const NotesList = ({ notes, title, parentPage, refetch }: Props) => {
   const { isColumn } = useNavbarStore();
+  const navigate = useNavigate()
+  const location = useLocation();
 
   const containerClasses = (isPinned?: boolean) =>
     classNames({
@@ -43,7 +45,6 @@ export const NotesList = ({ notes, title, parentPage, refetch }: Props) => {
   const { mutate: remove } = useDeleteNote();
   const { mutate: edit } = useEditNote();
 
-  const location = useLocation();
 
   async function changeImage(
     e: React.MouseEvent<HTMLLabelElement, MouseEvent>,
