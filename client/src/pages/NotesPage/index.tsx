@@ -35,22 +35,7 @@ const NotesPage = () => {
     isLoading: isNotesLoading,
     isError: hasNotesError,
     refetch: refetchNotes,
-  } = useInfiniteQuery(
-    ["notes"],
-    async ({ pageParam = 1 }) =>
-      await api.notes.getNotes({
-        page: pageParam,
-        sort: "-updatedAt",
-      }),
-    {
-      getNextPageParam: (lastPage) => {
-        if (lastPage.paging.currentPage < lastPage.paging.pages)
-          return lastPage.paging.currentPage + 1;
-        else return undefined;
-      },
-      keepPreviousData: true,
-    }
-  );
+  } = useInfiniteNotes("notes");
 
   const {
     data: pinnedNotes,
