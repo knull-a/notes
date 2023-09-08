@@ -16,7 +16,7 @@ import { useHandleScroll } from "@/hooks/useHandleScroll";
 
 import "./NotesPage.css";
 import { useNotes } from "@/services/notes/hooks/useNotes";
-import { ScrollRestoration } from "react-router-dom";
+import { useInfiniteNotes } from "@/services/notes/hooks/useInfiniteNotes";
 
 const NotesPage = () => {
   const api = useRest();
@@ -35,22 +35,7 @@ const NotesPage = () => {
     isLoading: isNotesLoading,
     isError: hasNotesError,
     refetch: refetchNotes,
-  } = useInfiniteQuery(
-    ["notes"],
-    async ({ pageParam = 1 }) =>
-      await api.notes.getNotes({
-        page: pageParam,
-        sort: "-updatedAt",
-      }),
-    {
-      getNextPageParam: (lastPage) => {
-        if (lastPage.paging.currentPage < lastPage.paging.pages)
-          return lastPage.paging.currentPage + 1;
-        else return undefined;
-      },
-      keepPreviousData: true,
-    }
-  );
+  } = useInfiniteNotes("notes");
 
   const {
     data: pinnedNotes,
@@ -73,6 +58,7 @@ const NotesPage = () => {
   async function onSubmit(data: Note) {
     mutate(data);
     await refetchNotes();
+    await refetchPinned();
     reset();
   }
 
@@ -96,6 +82,7 @@ const NotesPage = () => {
             setValue={setValue}
             getValues={getValues}
             register={register}
+            closeModal={() => reset()}
             isLoading={isSubmitLoading}
           />
         </form>
