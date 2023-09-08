@@ -35,7 +35,22 @@ const NotesPage = () => {
     isLoading: isNotesLoading,
     isError: hasNotesError,
     refetch: refetchNotes,
-  } = useInfiniteNotes("notes");
+  } = useInfiniteQuery(
+    ["notes"],
+    async ({ pageParam = 1 }) =>
+      await api.notes.getNotes({
+        page: pageParam,
+        sort: "-updatedAt",
+      }),
+    {
+      getNextPageParam: (lastPage) => {
+        if (lastPage.paging.currentPage < lastPage.paging.pages)
+          return lastPage.paging.currentPage + 1;
+        else return undefined;
+      },
+      keepPreviousData: true,
+    }
+  );
 
   const {
     data: pinnedNotes,
@@ -49,10 +64,12 @@ const NotesPage = () => {
 
   useEffect(() => {
     window.addEventListener("scroll", () => useHandleScroll(fetchNextPage));
-    return () =>
+    return () => {
+      console.log('scroll')
       window.removeEventListener("scroll", () =>
         useHandleScroll(fetchNextPage)
       );
+    }
   }, []);
 
   async function onSubmit(data: Note) {

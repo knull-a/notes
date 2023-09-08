@@ -2,6 +2,7 @@ import { CustomLoader } from "@/components/Custom/CustomLoader";
 import { NotesList } from "@/components/Notes/NotesList";
 import { useHandleScroll } from "@/hooks/useHandleScroll";
 import { useRest } from "@/services";
+import { useInfiniteNotes } from "@/services/notes/hooks/useInfiniteNotes";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 
@@ -13,23 +14,9 @@ const ArchivePage = () => {
     isLoading: isArchiveLoading,
     isError: hasArchiveError,
     refetch: refetchArchive,
-  } = useInfiniteQuery(
-    ["archive"],
-    async ({ pageParam = 1 }) =>
-      await api.notes.getNotes({
-        page: pageParam,
-        sort: "-updatedAt",
-        isArchived: true,
-      }),
-    {
-      getNextPageParam: (lastPage) => {
-        if (lastPage.paging.currentPage < lastPage.paging.pages)
-          return lastPage.paging.currentPage + 1;
-        else return undefined;
-      },
-      keepPreviousData: true,
-    }
-  );
+  } = useInfiniteNotes("archive", {
+    isArchived: true,
+  });
 
   useEffect(() => {
     window.addEventListener("scroll", () => useHandleScroll(fetchNextPage));

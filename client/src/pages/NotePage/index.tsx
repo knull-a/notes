@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useRest } from "@/services";
 import {
   QueryObserverResult,
@@ -49,7 +49,7 @@ const NotePage = ({ pathName }: Props) => {
     mutationFn: async (newNote: Note) => {
       return await api.notes.patchNote(newNote, String(note?._id));
     },
-    onSuccess: () => queryClient.invalidateQueries([pathName]),  
+    onSuccess: () => queryClient.invalidateQueries([pathName]),
   });
 
   const { register, handleSubmit, getValues, reset, setValue } = useForm<Note>({
@@ -66,7 +66,7 @@ const NotePage = ({ pathName }: Props) => {
 
   async function onSubmit(data: Note) {
     mutate(data);
-    console.log(pathName)
+    console.log(pathName);
     await refetchNotes();
     if (pathName === "notes") {
       console.log("if");
