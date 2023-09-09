@@ -10,7 +10,7 @@ import { useNavbarStore } from "@/stores/navbar";
 export default () => {
   const { toggleActive } = useSidebarStore();
   const { toggleColumn, isColumn } = useNavbarStore();
-  
+
   return (
     <div className="fixed top-0 bg-dark z-50 w-full py-2 px-6 border-slightly-dark border-b flex items-center justify-between gap-2">
       <button onClick={toggleActive} className="btn">
@@ -19,8 +19,8 @@ export default () => {
       <Link to={"/"} className="text-2xl mr-2">
         Notes
       </Link>
-      <div className="">
-        <Searchbar width={720} placeholder={"Search"} />
+      <div>
+        <Searchbar width={720} placeholder="Search" />
       </div>
       <button className="ml-auto btn" onClick={toggleColumn}>
         <Icon

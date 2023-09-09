@@ -1,14 +1,14 @@
 import { create, StoreApi } from "zustand";
 import { persist } from "zustand/middleware";
 
-type Store = {
+type NavbarStore = {
   isColumn: boolean;
   toggleColumn: () => void;
 };
 
 export const useNavbarStore = create(
   persist(
-    (set: StoreApi<Store>["setState"]) => ({
+    (set: StoreApi<NavbarStore>["setState"]) => ({
       isColumn: false,
       toggleColumn: () => set((state) => ({ isColumn: !state.isColumn })),
     }),
