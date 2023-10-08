@@ -1,55 +1,70 @@
-import { useEffect, useRef } from "react";
-import { RegisterOptions, UseFormRegister } from "react-hook-form";
+import { Note } from "@/services/notes/types";
+import { useNavbarStore } from "@/stores/navbar";
+import classNames from "classnames";
+import { createElement, useEffect, useRef } from "react";
+import {
+  FieldValues,
+  Path,
+  RegisterOptions,
+  UseFormRegister,
+  UseFormSetValue,
+} from "react-hook-form";
+
+type TextElement = "input" | "textarea";
+
 type Props = {
-  isTextarea?: boolean;
+  as?: TextElement;
   placeholder?: string;
   type?: string;
   value?: string;
   name?: string;
   options?: RegisterOptions;
   register?: UseFormRegister<any>; // temp
-  onChange?: any;
-  hidden?: boolean
+  hidden?: boolean;
+  disabled?: boolean;
+  setValue?: UseFormSetValue<any>;
 };
 
+function useTextAutoResize(target: HTMLTextAreaElement | EventTarget & HTMLTextAreaElement) {
+  target.style.height = "inherit";
+  target.style.height = `${Math.max(target.scrollHeight, 32)}px`;
+}
+
 export function CustomInput({
-  isTextarea,
+  as = "input",
   register,
   options,
   type = "text",
   name,
-  onChange,
+  disabled,
+  setValue,
   ...props
 }: Props) {
+  const { isColumn } = useNavbarStore();
+  const formRegister = register && name ? register(name, options) : null;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const classes = classNames({
+    input: true,
+    "pointer-events-none": disabled,
+  });
+
   useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "inherit";
-      // Set height
-      textareaRef.current.style.height = `${Math.max(
-        textareaRef.current.scrollHeight,
-        32
-      )}px`;
-    }
-  }, [props.value]);
+    if (textareaRef.current) useTextAutoResize(textareaRef.current);
+  }, [textareaRef, isColumn]);
+
   return (
     <>
-      {isTextarea ? (
-        <textarea
-          className="input"
-          {...props}
-          ref={textareaRef}
-          {...(register && register(name as string, options))}
-        />
-      ) : (
-        <input
-          className="input"
-          type={type}
-          {...props}
-          {...(register && register(name as string, options))}
-        />
-      )}
+      {createElement(as, {
+        className: classes,
+        ...formRegister,
+        ...props,
+        onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+          if (setValue && name) setValue(name as any, e.target.value);
+          useTextAutoResize(e.target)
+        },
+        ref: textareaRef,
+      })}
     </>
   );
 }

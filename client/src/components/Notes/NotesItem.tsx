@@ -1,11 +1,11 @@
 import { Note } from "@/services/notes/types";
 import { mdiPin, mdiPinOutline } from "@mdi/js";
 import Icon from "@mdi/react";
+import { CustomInput } from "../Custom/CustomInput";
 
 type Props = {
   note: Note;
 };
-
 
 export const NotesItem = ({ note }: Props) => {
   return (
@@ -23,7 +23,7 @@ export const NotesItem = ({ note }: Props) => {
         />
       )}
       <h3 className="mb-2 font-medium">{note.title}</h3>
-      <p>{note.text}</p>
+      <CustomInput disabled name="text" as="textarea" value={note.text} />
       {note.labels && (
         <div className="flex mt-2">
           {note.labels.map((label) => (

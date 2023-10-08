@@ -9,6 +9,7 @@ import {
   UseFormGetValues,
   UseFormRegister,
   UseFormSetValue,
+  UseFormWatch,
 } from "react-hook-form";
 
 import { CustomInput } from "../Custom/CustomInput";
@@ -19,10 +20,12 @@ import useModalStore from "@/stores/modal";
 type Props = {
   getValues: UseFormGetValues<Note>;
   setValue: UseFormSetValue<Note>;
+  setFormBackgroundColor?: React.Dispatch<React.SetStateAction<string>>;
   register: UseFormRegister<Note>;
   isLoading: boolean;
   isModal?: boolean;
   closeModal?: () => void;
+  watch?: UseFormWatch<Note>
 };
 
 export const NotesForm = ({
@@ -32,6 +35,7 @@ export const NotesForm = ({
   isLoading,
   isModal,
   setValue,
+  setFormBackgroundColor,
 }: Props) => {
   const [dots, setDots] = useState("");
   const isFormPinned = getValues("isPinned");
@@ -45,6 +49,7 @@ export const NotesForm = ({
   };
 
   function changeColorValue(e: React.ChangeEvent<HTMLInputElement>) {
+    if (setFormBackgroundColor) setFormBackgroundColor(e.target.value);
     setValue("color", e.target.value);
     changeColorState(e.target.value);
   }
@@ -64,7 +69,7 @@ export const NotesForm = ({
             name="title"
             register={register}
             placeholder="Enter title"
-          />
+            />
           <input
             className="absolute top-0 left-0"
             id="isPinned"
@@ -73,7 +78,7 @@ export const NotesForm = ({
             {...register("isPinned")}
             onChange={handlePinned}
             hidden
-          />
+            />
           <label htmlFor="isPinned" className="btn">
             <Icon path={isFormPinned ? mdiPin : mdiPinOutline} size={1} />
           </label>
@@ -83,9 +88,10 @@ export const NotesForm = ({
         <CustomInput
           name="text"
           register={register}
-          isTextarea
+          as="textarea"
           placeholder={`Note${dots}`}
           options={{ required: true }}
+          setValue={setValue}
         />
         <CustomInput name="color" register={register} hidden />
       </div>
