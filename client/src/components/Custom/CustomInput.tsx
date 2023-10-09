@@ -63,7 +63,7 @@ export function CustomInput({
           if (setValue && name) setValue(name as any, e.target.value);
           useTextAutoResize(e.target)
         },
-        ref: textareaRef,
+        ref: formRegister ? formRegister.ref : textareaRef,
       })}
     </>
   );
