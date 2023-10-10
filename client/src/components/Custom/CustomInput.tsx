@@ -3,9 +3,8 @@ import { useNavbarStore } from "@/stores/navbar";
 import classNames from "classnames";
 import { createElement, useEffect, useRef } from "react";
 import {
-  FieldValues,
-  Path,
   RegisterOptions,
+  UseFormGetValues,
   UseFormRegister,
   UseFormSetValue,
 } from "react-hook-form";
@@ -25,7 +24,9 @@ type Props = {
   setValue?: UseFormSetValue<any>;
 };
 
-function useTextAutoResize(target: HTMLTextAreaElement | EventTarget & HTMLTextAreaElement) {
+function useTextAutoResize(
+  target: HTMLElement | (EventTarget & HTMLTextAreaElement)
+) {
   target.style.height = "inherit";
   target.style.height = `${Math.max(target.scrollHeight, 32)}px`;
 }
@@ -60,10 +61,15 @@ export function CustomInput({
         ...formRegister,
         ...props,
         onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-          if (setValue && name) setValue(name as any, e.target.value);
-          useTextAutoResize(e.target)
+          if (setValue && name) setValue(name, e.target.value);
+          useTextAutoResize(e.target);
         },
-        ref: formRegister ? formRegister.ref : textareaRef,
+        ref: (e) => {
+          if (e) {
+            formRegister && formRegister.ref(e);
+            useTextAutoResize(e);
+          }
+        },
       })}
     </>
   );
