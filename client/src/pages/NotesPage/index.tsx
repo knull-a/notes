@@ -44,7 +44,9 @@ const NotesPage = () => {
     isLoading: isPinnedLoading,
     isError: hasPinnedError,
     refetch: refetchPinned,
-  } = useNotes("pinned");
+  } = useNotes("pinned", {
+    isPinned: true
+  });
 
   const { register, handleSubmit, getValues, reset, setValue, watch } =
     useForm<Note>();

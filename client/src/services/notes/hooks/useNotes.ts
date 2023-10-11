@@ -6,5 +6,5 @@ const api = useRest();
 export const useNotes = (name: string, params?: object) =>
   useQuery(
     [name],
-    async () => await api.notes.getNotes({ isPinned: true, sort: "-updatedAt", ...params })
+    async () => await api.notes.getNotes({ sort: "-updatedAt", ...params })
   );

@@ -66,13 +66,15 @@ const NotePage = ({ pathName }: Props) => {
 
   async function onSubmit(data: Note) {
     mutate(data);
-    console.log(pathName);
+    await refetchAndClose();
+  }
+
+  async function refetchAndClose() {
     await refetchNotes();
     if (pathName === "notes") {
-      console.log("if");
       await refetchPinnedNotes();
     }
-    handleCloseModal();
+    handleCloseModal(); 
   }
 
   useEffect(() => {
@@ -94,6 +96,7 @@ const NotePage = ({ pathName }: Props) => {
               setValue={setValue}
               isLoading={isSubmitLoading}
               closeModal={handleCloseModal}
+              refetch={refetchAndClose}
               isModal
             />
           </form>
