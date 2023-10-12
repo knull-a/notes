@@ -2,12 +2,10 @@ import type { Note } from "@/services/notes/types";
 
 import { useEffect, useState } from "react";
 import {
-  useInfiniteQuery,
   useQueryClient,
   useMutation,
 } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import classNames from "classnames";
 
 import { useRest } from "@/services";
 import { CustomLoader } from "@/components/Custom/CustomLoader";
@@ -48,13 +46,12 @@ const NotesPage = () => {
     isPinned: true
   });
 
-  const { register, handleSubmit, getValues, reset, setValue, watch } =
+  const { register, handleSubmit, getValues, reset, setValue } =
     useForm<Note>();
 
   useEffect(() => {
     window.addEventListener("scroll", () => useHandleScroll(fetchNextPage));
     return () => {
-      console.log("scroll");
       window.removeEventListener("scroll", () =>
         useHandleScroll(fetchNextPage)
       );
@@ -91,7 +88,6 @@ const NotesPage = () => {
             register={register}
             setFormBackgroundColor={setFormBackgroundColor}
             closeModal={() => reset()}
-            watch={watch}
             isLoading={isSubmitLoading}
           />
         </form>

@@ -10,15 +10,10 @@ type Props = {
 export const NotesItem = ({ note }: Props) => {
   return (
     <>
-      <div className="absolute top-3 right-3 opacity-0 transition-opacity buttons">
-        <button className="btn">
-          <Icon path={note.isPinned ? mdiPin : mdiPinOutline} />
-        </button>
-      </div>
       {note.image && (
         <img
           className="rounded-lg mb-2 max-w-sm m-auto"
-          src={note.image}
+          src={String(note.image)}
           alt="Image"
         />
       )}

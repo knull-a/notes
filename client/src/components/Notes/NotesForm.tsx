@@ -1,10 +1,11 @@
 import type { Note } from "@/services/notes/types";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, ChangeEvent } from "react";
 
 import Icon from "@mdi/react";
 import {
   mdiArchiveOutline,
+  mdiClose,
   mdiDeleteOutline,
   mdiImageOutline,
   mdiPaletteOutline,
@@ -75,13 +76,15 @@ export const NotesForm = ({
   setFormBackgroundColor,
 }: Props & FormProps) => {
   const [dots, setDots] = useState("");
+  const imageRef = useRef<HTMLImageElement>(null);
+  const [image, setImage] = useState<string>("");
 
   const formText = getValues("text");
   const note = getValues();
 
   const { changeColor: changeColorState } = useModalStore();
   const { mutate: edit } = useEditNote();
-  const api = useRest()
+  const api = useRest();
 
   function changeColorValue(e: React.ChangeEvent<HTMLInputElement>) {
     if (setFormBackgroundColor) setFormBackgroundColor(e.target.value);
@@ -95,8 +98,20 @@ export const NotesForm = ({
   }
 
   async function removeNote() {
-    api.notes.deleteNote(note._id) 
-    if (refetch) await refetch()
+    api.notes.deleteNote(note._id);
+    if (refetch) await refetch();
+  }
+
+  function handleFiles(e: ChangeEvent<HTMLInputElement>) {
+    if (e.target.files) {
+      const [file] = e.target.files;
+      setValue("image", file);
+      setImage(URL.createObjectURL(file));
+    }
+  }
+
+  function removeImage() {
+    setValue("image", "")
   }
 
   useEffect(() => {
@@ -122,6 +137,21 @@ export const NotesForm = ({
               register={register}
             />
           )}
+        </div>
+      )}
+      {note.image && note.image.length !== 0 && (
+        <div className="relative">
+          <button
+            className="btn absolute top-0 right-0"
+            onClick={removeImage}
+            type="button"
+          >
+            <Icon path={mdiClose} size={1} />
+          </button>
+          <img
+            className="rounded-lg mb-2 max-w-sm m-auto"
+            src={isModal ? String(note.image) : image}
+          />
         </div>
       )}
       <div>
@@ -150,7 +180,12 @@ export const NotesForm = ({
               </div>
             </label>
             <label>
-              <input type="file" name="image" hidden />
+              <input
+                type="file"
+                {...(register && register("image"))}
+                onChange={(e) => handleFiles(e)}
+                hidden
+              />
               <div className="btn">
                 <Icon path={mdiImageOutline} size={1} />
               </div>

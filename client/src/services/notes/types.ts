@@ -8,7 +8,7 @@ export type Note = {
   _id: string;
   title: string;
   text: string;
-  image: string;
+  image: File | string;
   color: string;
   labels: Label[];
   isPinned: boolean;

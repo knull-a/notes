@@ -1,7 +1,9 @@
 import { Router, Request, Response } from "express";
 import mongoose from "mongoose";
+import { readFileSync } from "fs";
 import { Note } from "../database/schemas/Notes";
 import { Label } from "../database/schemas/Labels";
+import multer from "multer";
 
 type NoteQuery = {
   limit?: string;
@@ -13,14 +15,15 @@ type NoteQuery = {
 };
 
 const notesRoute = Router();
+const upload = multer({ dest: "uploads/" });
 
 export const getAllNotes = async (
   req: Request<{}, {}, {}, NoteQuery>,
   res: Response
 ) => {
   try {
-    const limit = parseInt(req.query.limit || '10');
-    const page = parseInt(req.query.page || '1');
+    const limit = parseInt(req.query.limit || "10");
+    const page = parseInt(req.query.page || "1");
     const isPinnedQuery = !!req.query.isPinned || false;
     const isArchivedQuery = !!req.query.isArchived || false;
 
@@ -50,14 +53,27 @@ export const getAllNotes = async (
       .skip(skip)
       .limit(limit)
       .populate("labels")
-      .sort(req.query.sort || 'updatedAt');
+      .sort(req.query.sort || "updatedAt");
 
     const notesCount = await Note.count(noteCountQuery);
 
     const totalPages = Math.ceil(notesCount / limit);
 
+    const notesWithImageData = notes.map((note) => {
+      const noteObj = note.toObject();
+      const imageData =
+        noteObj.image && noteObj.image.data
+          ? `data:${
+              noteObj.image.contentType
+            };base64,${noteObj.image.data.toString("base64")}`
+          : null;
+      // @ts-ignore
+      noteObj.image = imageData;
+      return noteObj;
+    });
+
     res.status(200).send({
-      data: notes,
+      data: notesWithImageData,
       paging: {
         total: notesCount,
         pages: totalPages,
@@ -74,7 +90,14 @@ const createNote = async (req: Request, res: Response) => {
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    const newNote = await Note.create({ ...req.body, session: session });
+    const newNoteData = { ...req.body, session: session };
+    if (req.file) {
+      newNoteData.image = {
+        data: readFileSync(req.file.path),
+        contentType: req.file.mimetype,
+      };
+    }
+    const newNote = await Note.create(newNoteData);
     const labelsToUpdate = await Label.find({
       _id: { $in: newNote.labels },
     });
@@ -106,7 +129,16 @@ export const getNoteById = async (req: Request, res: Response) => {
     if (!note) {
       res.status(404).json({ error: "Note not found" });
     } else {
-      res.status(200).json(note);
+      const noteObj = note.toObject();
+      const imageData =
+        noteObj.image && noteObj.image.data
+          ? `data:${
+              noteObj.image.contentType
+            };base64,${noteObj.image.data.toString("base64")}`
+          : null;
+      // @ts-ignore
+      noteObj.image = imageData;
+      res.status(200).json(noteObj);
     }
   } catch (error) {
     res.status(500).json({ error: "Internal server error" });
@@ -180,7 +212,7 @@ export const deleteNoteById = async (req: Request, res: Response) => {
 };
 
 notesRoute.get("/", getAllNotes);
-notesRoute.post("/", createNote);
+notesRoute.post("/", upload.single("image"), createNote);
 notesRoute.get("/:id", getNoteById);
 notesRoute.patch("/:id", updateNoteById);
 notesRoute.delete("/:id", deleteNoteById);

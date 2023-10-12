@@ -23,7 +23,11 @@ export class NotesRest extends BaseRest {
   }
 
   public postNote(data: object) {
-    return this.post<Note>("/notes/", data);
+    return this.post<Note>("/notes/", data, {
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      }
+    });
   }
 
   public patchNote(data: object, id: string) {
