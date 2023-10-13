@@ -111,7 +111,7 @@ export const NotesForm = ({
   }
 
   function removeImage() {
-    setValue("image", "")
+    setValue("image", "");
   }
 
   useEffect(() => {
@@ -150,7 +150,7 @@ export const NotesForm = ({
           </button>
           <img
             className="rounded-lg mb-2 max-w-sm m-auto"
-            src={isModal ? String(note.image) : image}
+            src={note.image && note.image.length ? String(note.image) : image}
           />
         </div>
       )}

@@ -13,8 +13,14 @@ const NoteSchema = new mongoose.Schema(
       maxlength: 10000,
     },
     image: {
-      data: Buffer,
-      contentType: String,
+      data: {
+        type: Buffer,
+        default: null,
+      },
+      contentType: {
+        type: String,
+        default: null,
+      },
     },
     color: {
       type: mongoose.SchemaTypes.String,

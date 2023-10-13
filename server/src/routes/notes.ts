@@ -151,6 +151,12 @@ export const updateNoteById = async (req: Request, res: Response) => {
   session.startTransaction();
   try {
     const noteToUpdate = await Note.findById(id);
+    if (req.file) {
+      req.body.image = {
+        data: readFileSync(req.file.path),
+        contentType: req.file.mimetype,
+      };
+    }
 
     const updatedNote = await Note.findOneAndUpdate({ _id: id }, req.body, {
       new: true,
@@ -214,7 +220,7 @@ export const deleteNoteById = async (req: Request, res: Response) => {
 notesRoute.get("/", getAllNotes);
 notesRoute.post("/", upload.single("image"), createNote);
 notesRoute.get("/:id", getNoteById);
-notesRoute.patch("/:id", updateNoteById);
+notesRoute.patch("/:id", upload.single("image"), updateNoteById);
 notesRoute.delete("/:id", deleteNoteById);
 
 export default notesRoute;

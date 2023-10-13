@@ -65,7 +65,10 @@ const NotePage = ({ pathName }: Props) => {
   }
 
   async function onSubmit(data: Note) {
-    mutate(data);
+    const { image, ...newData } = data;
+    getValues("image") && typeof getValues("image") === "string"
+      ? mutate(newData)
+      : mutate(data);
     await refetchAndClose();
   }
 
@@ -74,7 +77,7 @@ const NotePage = ({ pathName }: Props) => {
     if (pathName === "notes") {
       await refetchPinnedNotes();
     }
-    handleCloseModal(); 
+    handleCloseModal();
   }
 
   useEffect(() => {
