@@ -1,8 +1,10 @@
 import axios from "axios"
 import { NotesRest } from "./notes"
+import { LabelRest } from "./labels"
 
 export class Rest {
   public readonly notes
+  public readonly labels
 
   private endpoint
 
@@ -10,6 +12,7 @@ export class Rest {
     this.endpoint = this.createAxios()
 
     this.notes = new NotesRest(this.endpoint)
+    this.labels = new LabelRest(this.endpoint)
   }
 
   private createAxios() {

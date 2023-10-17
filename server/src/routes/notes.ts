@@ -1,5 +1,5 @@
 import { Router, Request, Response } from "express";
-import mongoose from "mongoose";
+import mongoose, { ObjectId } from "mongoose";
 import { readFileSync } from "fs";
 import { Note } from "../database/schemas/Notes";
 import { Label } from "../database/schemas/Labels";
@@ -12,6 +12,7 @@ type NoteQuery = {
   isArchived?: string;
   search?: string;
   sort?: string;
+  label?: string;
 };
 
 const notesRoute = Router();
@@ -26,6 +27,8 @@ export const getAllNotes = async (
     const page = parseInt(req.query.page || "1");
     const isPinnedQuery = !!req.query.isPinned || false;
     const isArchivedQuery = !!req.query.isArchived || false;
+    
+    const labelQuery = req.query.label ? {labels: new mongoose.Types.ObjectId(req.query.label)} : {}
 
     const skip = (page - 1) * limit;
     const searchParam =
@@ -38,6 +41,7 @@ export const getAllNotes = async (
       ],
       isArchived: isArchivedQuery,
       isPinned: isPinnedQuery,
+      ...labelQuery,
     };
 
     const noteCountQuery = {
@@ -47,6 +51,7 @@ export const getAllNotes = async (
       ],
       isArchived: isArchivedQuery,
       isPinned: isPinnedQuery,
+      ...labelQuery,
     };
 
     const notes = await Note.find(notesQuery)

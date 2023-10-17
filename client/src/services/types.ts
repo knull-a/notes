@@ -8,4 +8,4 @@ export type WithPage<T> = {
   };
 };
 
-export type PathName = "notes" | "archive" | "pinned"
+export type PathName = "notes" | "archive" | "pinned" | "labelNotes"

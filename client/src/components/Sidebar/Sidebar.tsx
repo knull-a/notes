@@ -12,6 +12,7 @@ import classNames from "classnames";
 
 import { useSidebarStore } from "@/stores/sidebar";
 import "./Sidebar.css";
+import { useLabelQuery } from "@/services/labels/hooks/useLabelQuery";
 
 export const Sidebar = () => {
   const { isActive } = useSidebarStore();
@@ -21,6 +22,7 @@ export const Sidebar = () => {
     "-translate-x-full": isActive === true,
     "translate-x-0": isActive === false,
   });
+  const { data: labels } = useLabelQuery("labels");
   return (
     <>
       <div>
@@ -37,14 +39,20 @@ export const Sidebar = () => {
                   <span className="ml-3">Notes</span>
                 </Link>
               </li>
+              {labels &&
+                labels.length &&
+                labels.map((item) => (
+                  <li key={item._id}>
+                    <Link to={`/notes?name=${item.title}&label=${item._id}`} className="sidebar-item">
+                      <Icon path={mdiLabelOutline} size={1} />
+                      <span className="flex-1 ml-3 whitespace-nowrap">
+                        {item.title}
+                      </span>
+                    </Link>
+                  </li>
+                ))}
               <li>
-                <Link to="/test" className="sidebar-item">
-                  <Icon path={mdiLabelOutline} size={1} />
-                  <span className="flex-1 ml-3 whitespace-nowrap">Label</span>
-                </Link>
-              </li>
-              <li>
-                <Link to={"/"} className="sidebar-item">
+                <Link to="/" className="sidebar-item">
                   <Icon path={mdiPencilOutline} size={1} />
                   <span className="flex-1 ml-3 whitespace-nowrap">
                     Edit Labels

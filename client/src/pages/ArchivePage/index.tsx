@@ -3,11 +3,10 @@ import { NotesList } from "@/components/Notes/NotesList";
 import { useHandleScroll } from "@/hooks/useHandleScroll";
 import { useRest } from "@/services";
 import { useInfiniteNotes } from "@/services/notes/hooks/useInfiniteNotes";
-import { useInfiniteQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 
 const ArchivePage = () => {
-  const api = useRest();
   const {
     data: archiveNotes,
     fetchNextPage,
@@ -17,7 +16,7 @@ const ArchivePage = () => {
   } = useInfiniteNotes("archive", {
     isArchived: true,
   });
-
+  
   useEffect(() => {
     window.addEventListener("scroll", () => useHandleScroll(fetchNextPage));
     return () =>
@@ -40,7 +39,6 @@ const ArchivePage = () => {
       <NotesList
         title="Archive"
         notes={archiveNotes?.pages.map((page) => page.data).flat()}
-        refetch={refetchArchive}
         parentPage="archive"
       />
     </div>

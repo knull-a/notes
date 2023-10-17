@@ -190,12 +190,16 @@ export const NotesForm = ({
                 <Icon path={mdiImageOutline} size={1} />
               </div>
             </label>
-            <button className="btn" onClick={archiveNote} type="button">
-              <Icon path={mdiArchiveOutline} size={1} />
-            </button>
-            <button className="btn" onClick={removeNote} type="button">
-              <Icon path={mdiDeleteOutline} size={1} />
-            </button>
+            {isModal && (
+              <>
+                <button className="btn" onClick={archiveNote} type="button">
+                  <Icon path={mdiArchiveOutline} size={1} />
+                </button>
+                <button className="btn" onClick={removeNote} type="button">
+                  <Icon path={mdiDeleteOutline} size={1} />
+                </button>
+              </>
+            )}
           </div>
           <CustomButton text="Cancel" onClick={closeModal} />
           <CustomButton isLoading={isLoading} text="Save" type="submit" />

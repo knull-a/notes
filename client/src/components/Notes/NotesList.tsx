@@ -14,11 +14,10 @@ import { NotesItem } from "./NotesItem";
 type Props = {
   notes?: Note[];
   title?: string;
-  refetch: any;
   parentPage: string;
 };
 
-export const NotesList = ({ notes, title, parentPage, refetch }: Props) => {
+export const NotesList = ({ notes, title, parentPage }: Props) => {
   const { isColumn } = useNavbarStore();
   const navigate = useNavigate()
   const location = useLocation();
@@ -33,35 +32,6 @@ export const NotesList = ({ notes, title, parentPage, refetch }: Props) => {
   const { mutate: remove } = useDeleteNote();
   const { mutate: edit } = useEditNote();
 
-
-  async function changeImage(
-    e: React.MouseEvent<HTMLLabelElement, MouseEvent>,
-    note: Note
-  ) {
-    console.log("changeImage", note._id);
-    e.preventDefault();
-  }
-
-  async function archiveNote(
-    e: React.MouseEvent<HTMLLabelElement, MouseEvent>,
-    note: Note
-  ) {
-    console.log("archiveImage", note._id);
-    e.preventDefault();
-    edit({ ...note, isArchived: !note.isArchived });
-    await refetch();
-  }
-
-  async function deleteNote(
-    e: React.MouseEvent<HTMLLabelElement, MouseEvent>,
-    note: Note
-  ) {
-    e.preventDefault();
-    console.log("deleteNote", note._id);
-    remove(note._id);
-    await refetch();
-  }
-
   return notes ? (
     <div>
       {title && (
@@ -74,7 +44,7 @@ export const NotesList = ({ notes, title, parentPage, refetch }: Props) => {
           <Link
             to={`/${parentPage}/${note._id}`}
             className="block break-inside border border-slightly-dark p-3 cursor-default break-all mb-6 notes rounded-lg transition-all relative"
-            style={{ backgroundColor: `${note.color}` }}
+            style={{ backgroundColor: note.color }}
             key={note._id + idx}
             state={{ previousLocation: location }}
           >

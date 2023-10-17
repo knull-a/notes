@@ -1,4 +1,10 @@
-import { Outlet, useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 import { useRest } from "@/services";
 import {
   QueryObserverResult,
@@ -30,6 +36,8 @@ const NotePage = ({ pathName }: Props) => {
   const navigate = useNavigate();
   const { pathname, state } = useLocation();
   const queryClient = useQueryClient();
+  const [searchParams] = useSearchParams();
+  const { toggleModal, isOpened } = useModalStore();
 
   const { data: note, isLoading: isNoteLoading } = useQuery(
     ["note"],
@@ -60,6 +68,10 @@ const NotePage = ({ pathName }: Props) => {
 
   function handleCloseModal() {
     const parentPath = pathname.substring(0, pathname.lastIndexOf("/"));
+    if (state && state.previousLocation && state.previousLocation.pathname)
+      return navigate(
+        state.previousLocation.pathname + state.previousLocation.search
+      );
     if (parentPath === "") return navigate("/");
     navigate(parentPath);
   }
@@ -87,6 +99,15 @@ const NotePage = ({ pathName }: Props) => {
       console.log(note.color, color, pathName);
     }
   }, [note, reset]);
+
+  useEffect(() => {
+    toggleModal(true);
+    console.log("onmounted", isOpened);
+    return () => {
+      toggleModal(false);
+      console.log("onunmounted", isOpened);
+    };
+  }, []);
 
   return (
     <>

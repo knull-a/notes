@@ -1,10 +1,7 @@
 import type { Note } from "@/services/notes/types";
 
 import { useEffect, useState } from "react";
-import {
-  useQueryClient,
-  useMutation,
-} from "@tanstack/react-query";
+import { useQueryClient, useMutation, QueryCache } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 
 import { useRest } from "@/services";
@@ -16,8 +13,12 @@ import { useHandleScroll } from "@/hooks/useHandleScroll";
 import "./NotesPage.css";
 import { useNotes } from "@/services/notes/hooks/useNotes";
 import { useInfiniteNotes } from "@/services/notes/hooks/useInfiniteNotes";
+import { useSearchParams } from "react-router-dom";
 
 const NotesPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const labelQuery = searchParams.get("label");
+  const noteNameQuery = searchParams.get("name");
   const [formBackgroundColor, setFormBackgroundColor] = useState("");
   const api = useRest();
   const queryClient = useQueryClient();
@@ -29,13 +30,17 @@ const NotesPage = () => {
     onSuccess: () => queryClient.invalidateQueries(["notes"]),
   });
 
+  console.log(labelQuery);
+
   const {
     data: notes,
     fetchNextPage,
     isLoading: isNotesLoading,
     isError: hasNotesError,
     refetch: refetchNotes,
-  } = useInfiniteNotes("notes");
+  } = useInfiniteNotes(labelQuery ? "labelNotes" : "notes" , {
+    label: labelQuery,
+  });
 
   const {
     data: pinnedNotes,
@@ -43,11 +48,19 @@ const NotesPage = () => {
     isError: hasPinnedError,
     refetch: refetchPinned,
   } = useNotes("pinned", {
-    isPinned: true
+    isPinned: true,
+    label: labelQuery,
   });
 
   const { register, handleSubmit, getValues, reset, setValue } =
     useForm<Note>();
+
+  async function onSubmit(data: Note) {
+    mutate(data);
+    await refetchNotes();
+    await refetchPinned();
+    reset();
+  }
 
   useEffect(() => {
     window.addEventListener("scroll", () => useHandleScroll(fetchNextPage));
@@ -58,12 +71,11 @@ const NotesPage = () => {
     };
   }, []);
 
-  async function onSubmit(data: Note) {
-    mutate(data);
-    await refetchNotes();
-    await refetchPinned();
-    reset();
-  }
+  useEffect(() => {
+    console.log(notes, pinnedNotes)
+    refetchPinned();
+    refetchNotes();
+  }, [labelQuery]);
 
   if (isNotesLoading || isPinnedLoading)
     return (
@@ -91,19 +103,17 @@ const NotesPage = () => {
             isLoading={isSubmitLoading}
           />
         </form>
-        {pinnedNotes.data !== undefined && (
+        {!!pinnedNotes.data.length && (
           <NotesList
             parentPage="notes"
             title="Pinned"
             notes={pinnedNotes.data.flat()}
-            refetch={refetchPinned}
           />
         )}
         <NotesList
           parentPage="notes"
-          title="Other notes"
+          title={noteNameQuery || "Other notes"}
           notes={notes.pages.map((page) => page.data).flat()}
-          refetch={refetchNotes}
         />
       </>
     )
