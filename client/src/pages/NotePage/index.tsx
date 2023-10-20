@@ -101,12 +101,8 @@ const NotePage = ({ pathName }: Props) => {
   }, [note, reset]);
 
   useEffect(() => {
-    toggleModal(true);
-    console.log("onmounted", isOpened);
-    return () => {
-      toggleModal(false);
-      console.log("onunmounted", isOpened);
-    };
+    toggleModal(true)
+    return () => toggleModal(false)
   }, []);
 
   return (

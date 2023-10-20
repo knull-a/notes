@@ -1,6 +1,6 @@
 import type { Note } from "@/services/notes/types";
 
-import { useState, useEffect, useRef, ChangeEvent } from "react";
+import { useState, useEffect, useRef, ChangeEvent, createElement } from "react";
 
 import Icon from "@mdi/react";
 import {
@@ -25,6 +25,8 @@ import { CustomButton } from "../Custom/CustomButton";
 import useModalStore from "@/stores/modal";
 import { useRest } from "@/services";
 import { useEditNote } from "@/services/notes/hooks/useMutateNote";
+import { NotesLabels } from "./NotesLabels";
+import { Link } from "react-router-dom";
 
 type FormProps = {
   getValues: UseFormGetValues<Note>;
@@ -164,6 +166,7 @@ export const NotesForm = ({
           setValue={setValue}
         />
         <CustomInput name="color" register={register} hidden />
+        <NotesLabels note={note} as={Link} />
       </div>
       {(isModal || formText) && (
         <div className="flex gap-2 justify-end">

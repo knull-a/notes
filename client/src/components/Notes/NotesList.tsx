@@ -3,13 +3,10 @@ import type { Note } from "@/services/notes/types";
 import classNames from "classnames";
 
 import { useNavbarStore } from "@/stores/navbar";
-import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 
-import {
-  useDeleteNote,
-  useEditNote,
-} from "@/services/notes/hooks/useMutateNote";
 import { NotesItem } from "./NotesItem";
+import useModalStore from "@/stores/modal";
 
 type Props = {
   notes?: Note[];
@@ -19,8 +16,8 @@ type Props = {
 
 export const NotesList = ({ notes, title, parentPage }: Props) => {
   const { isColumn } = useNavbarStore();
-  const navigate = useNavigate()
   const location = useLocation();
+  const { isOpened, toggleModal } = useModalStore();
 
   const containerClasses = (isPinned?: boolean) =>
     classNames({
@@ -28,9 +25,6 @@ export const NotesList = ({ notes, title, parentPage }: Props) => {
       "masonry-3": !isColumn,
       "mb-6": isPinned,
     });
-
-  const { mutate: remove } = useDeleteNote();
-  const { mutate: edit } = useEditNote();
 
   return notes ? (
     <div>
@@ -47,6 +41,7 @@ export const NotesList = ({ notes, title, parentPage }: Props) => {
             style={{ backgroundColor: note.color }}
             key={note._id + idx}
             state={{ previousLocation: location }}
+            onClick={() => toggleModal(true)}
           >
             <NotesItem note={note} />
           </Link>
