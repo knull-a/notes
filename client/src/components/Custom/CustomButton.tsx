@@ -1,21 +1,40 @@
+import Icon from "@mdi/react";
+import { IconProps } from "@mdi/react/dist/IconProps";
 import classNames from "classnames";
+import { ButtonHTMLAttributes } from "react";
 
-type Props = {
-  text: string;
+interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
+  text?: string;
   onClick?: () => void;
-  disabled?: boolean;
-  type?: "submit" | "button" | "reset";
-  isLoading?: boolean
-};
+  isLoading?: boolean;
+  icon?: IconProps;
+  isSidebarItem?: boolean;
+}
 
-export const CustomButton = ({ type = "button", isLoading, text, ...props }: Props) => {
-  const button = classNames({
-    "px-3 py-1 rounded-2xl font-medium hover:bg-slightly-dark": true
-  })
+export const CustomButton = ({
+  type = "button",
+  isLoading,
+  text,
+  isSidebarItem,
+  children,
+  icon = { path: "", size: 1 },
+  ...props
+}: Props) => {
+  const buttonClasses = classNames({
+    "px-3 py-1 rounded-2xl font-medium hover:bg-slightly-dark flex items-center gap-2":
+      !isSidebarItem,
+    "sidebar-item w-full": isSidebarItem,
+  });
   return (
     <>
-      <button disabled={isLoading} className={button} type={type} {...props}>
-        {text}
+      <button
+        {...props}
+        disabled={isLoading}
+        className={buttonClasses}
+        type={type}
+      >
+        {icon.path && <Icon {...icon} />}
+        <span className={icon.path && "ml-3"}>{text || children}</span>
       </button>
     </>
   );

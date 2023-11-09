@@ -1,6 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import classNames from "classnames";
 import useModalStore from "@/stores/modal";
+import { createPortal } from "react-dom";
 
 type Props = {
   children?: React.ReactNode;
@@ -13,7 +14,7 @@ const CustomModal = ({
   children,
   isVisible,
   setVisible,
-  hasCloseIcon,
+  hasCloseIcon = true,
 }: Props) => {
   const modal = classNames({
     fixed: true,
@@ -29,11 +30,7 @@ const CustomModal = ({
 
   const { color } = useModalStore();
 
-  useEffect(() => {
-    console.log(color);
-  }, []);
-
-  return (
+  return createPortal(
     <>
       <div className={modal}>
         {hasCloseIcon && (
@@ -48,8 +45,9 @@ const CustomModal = ({
           {children}
         </div>
       </div>
-      <div onClick={setVisible} className={overlay}></div>
-    </>
+      <div onClick={setVisible} className={overlay} />
+    </>,
+    document.getElementById('modal-container') as Element
   );
 };
 

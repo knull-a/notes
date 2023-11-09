@@ -52,7 +52,7 @@ const NotesPage = () => {
     label: labelQuery,
   });
 
-  const { register, handleSubmit, getValues, reset, setValue } =
+  const { register, handleSubmit, getValues, reset, setValue, control } =
     useForm<Note>();
 
   async function onSubmit(data: Note) {
@@ -98,6 +98,7 @@ const NotesPage = () => {
             setValue={setValue}
             getValues={getValues}
             register={register}
+            control={control}
             setFormBackgroundColor={setFormBackgroundColor}
             closeModal={() => reset()}
             isLoading={isSubmitLoading}

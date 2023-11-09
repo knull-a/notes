@@ -8,12 +8,15 @@ import {
   mdiClose,
   mdiDeleteOutline,
   mdiImageOutline,
+  mdiLabel,
+  mdiLabelOutline,
   mdiPaletteOutline,
   mdiPin,
   mdiPinOutline,
 } from "@mdi/js";
 
 import {
+  Control,
   UseFormGetValues,
   UseFormRegister,
   UseFormSetValue,
@@ -27,6 +30,7 @@ import { useRest } from "@/services";
 import { useEditNote } from "@/services/notes/hooks/useMutateNote";
 import { NotesLabels } from "./NotesLabels";
 import { Link } from "react-router-dom";
+import { NotesLabelMenu } from "./NotesLabelMenu";
 
 type FormProps = {
   getValues: UseFormGetValues<Note>;
@@ -41,6 +45,7 @@ type Props = {
   closeModal: () => void;
   watch?: UseFormWatch<Note>;
   refetch?: () => Promise<void>;
+  control: Control<Note>
 };
 
 const PinButton = ({ register, getValues, setValue }: FormProps) => {
@@ -76,6 +81,7 @@ export const NotesForm = ({
   setValue,
   refetch,
   setFormBackgroundColor,
+  control
 }: Props & FormProps) => {
   const [dots, setDots] = useState("");
   const imageRef = useRef<HTMLImageElement>(null);
@@ -100,7 +106,7 @@ export const NotesForm = ({
   }
 
   async function removeNote() {
-    api.notes.deleteNote(note._id);
+    await api.notes.deleteNote(note._id);
     if (refetch) await refetch();
   }
 
@@ -193,6 +199,7 @@ export const NotesForm = ({
                 <Icon path={mdiImageOutline} size={1} />
               </div>
             </label>
+            <NotesLabelMenu control={control} register={register} />
             {isModal && (
               <>
                 <button className="btn" onClick={archiveNote} type="button">

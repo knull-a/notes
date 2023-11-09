@@ -1,6 +1,4 @@
 import { Note } from "@/services/notes/types";
-import { mdiPin, mdiPinOutline } from "@mdi/js";
-import Icon from "@mdi/react";
 import { CustomInput } from "../Custom/CustomInput";
 import { NotesLabels } from "./NotesLabels";
 
