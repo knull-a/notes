@@ -1,51 +1,16 @@
 import { Router } from "express";
-import { Label } from "../database/schemas/Labels";
+import labels from "../controllers/labels";
 
 const labelRoute = Router();
 
-labelRoute.get("/", async (req, res) => {
-  try {
-    const { search = "" } = req.query;
-    const labels = await Label.find({}).populate("notes");
-    const filteredLabels = labels
-      .reverse()
-      .filter((label) => label.title.includes(search as string));
-    res.status(200).json(filteredLabels);
-  } catch (error) {
-    res.status(400).json({ error });
-    console.error(error);
-  }
-});
+const { getAllLabels, createLabel, editLabel, deleteLabel } = labels;
 
-labelRoute.post("/", async (req, res) => {
-  try {
-    const { title } = req.body;
-    const newNote = await Label.create({ title });
-    res.status(201).json(newNote);
-  } catch (error) {
-    res.status(400).json(error);
-    console.error(error);
-  }
-});
+labelRoute.get("/", getAllLabels);
 
-labelRoute.patch("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    await Label.findByIdAndUpdate({ _id: id }, req.body);
-    res.status(200).json({ message: "Label updated successfully" });
-  } catch (error) {
-    res.status(400).json(error);
-  }
-});
+labelRoute.post("/", createLabel);
 
-labelRoute.delete("/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-    await Label.findOneAndRemove({ _id: id });
-    res.status(200).json({ message: "Note deleted successfully" });
-  } catch (error) {
-    res.status(400).json({ error });
-  }
-});
+labelRoute.patch("/:id", editLabel);
+
+labelRoute.delete("/:id", deleteLabel);
 
 export default labelRoute;

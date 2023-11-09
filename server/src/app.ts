@@ -9,6 +9,7 @@ import "./database"
 
 import notesRoute from "./routes/notes";
 import labelRoute from "./routes/label";
+import { initRoutes } from "./routes";
 
 dotenv.config()
 
@@ -32,7 +33,6 @@ app.use(
   })
 );
 
-app.use("/api/v1/notes", notesRoute)
-app.use("/api/v1/labels", labelRoute)
+initRoutes(app)
 
 app.listen(port, () => console.log(`App is listening on http://localhost:${port} !`));

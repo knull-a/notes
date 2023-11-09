@@ -1,14 +1,14 @@
-import mongoose from "mongoose";
+import { Schema, SchemaTypes, model } from "mongoose";
 
-const NoteSchema = new mongoose.Schema(
+const NoteSchema = new Schema(
   {
     title: {
-      type: mongoose.SchemaTypes.String,
+      type: SchemaTypes.String,
       default: "",
       maxlength: 200,
     },
     text: {
-      type: mongoose.SchemaTypes.String,
+      type: SchemaTypes.String,
       required: true,
       maxlength: 10000,
     },
@@ -23,22 +23,22 @@ const NoteSchema = new mongoose.Schema(
       },
     },
     color: {
-      type: mongoose.SchemaTypes.String,
+      type: SchemaTypes.String,
       default: null,
     },
     labels: [
       {
-        type: mongoose.SchemaTypes.ObjectId,
+        type: SchemaTypes.ObjectId,
         ref: "label",
       },
     ],
     isPinned: {
-      type: mongoose.SchemaTypes.Boolean,
+      type: SchemaTypes.Boolean,
       required: true,
       default: false,
     },
     isArchived: {
-      type: mongoose.SchemaTypes.Boolean,
+      type: SchemaTypes.Boolean,
       required: true,
       default: false,
     },
@@ -48,4 +48,4 @@ const NoteSchema = new mongoose.Schema(
   }
 );
 
-export const Note = mongoose.model("note", NoteSchema);
+export const Note = model("note", NoteSchema);
