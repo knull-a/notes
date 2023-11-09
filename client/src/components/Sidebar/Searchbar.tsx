@@ -11,17 +11,15 @@ type Props = {
 };
 
 export const Searchbar = ({ width = 320, ...props }: Props) => {
-  const [searchValue, setSearchValue] = useState("");
-
   const containerClasses = classNames({
     "bg-slightly-dark rounded-xl p-3 flex": true,
   });
 
-  const { pathName } = useSearchStore();
-
-  const { data: notes } = useInfiniteNotes(pathName, {
-    search: searchValue,
-  });
+  const {
+    pathName,
+    searchText: searchValue,
+    setSearchText: setSearchValue,
+  } = useSearchStore();
 
   const inputClasses = classNames({
     "ml-2 outline-none bg-transparent placeholder:text-white": true,

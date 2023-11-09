@@ -14,14 +14,19 @@ import "./NotesPage.css";
 import { useNotes } from "@/services/notes/hooks/useNotes";
 import { useInfiniteNotes } from "@/services/notes/hooks/useInfiniteNotes";
 import { useSearchParams } from "react-router-dom";
+import { useSearchStore } from "@/stores/search";
 
 const NotesPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const labelQuery = searchParams.get("label");
-  const noteNameQuery = searchParams.get("name");
   const [formBackgroundColor, setFormBackgroundColor] = useState("");
+
   const api = useRest();
   const queryClient = useQueryClient();
+
+  const labelQuery = searchParams.get("label");
+  const noteNameQuery = searchParams.get("name");
+
+  const { searchText } = useSearchStore();
 
   const { mutate, isLoading: isSubmitLoading } = useMutation({
     mutationFn: async (newNote: Note) => {
@@ -38,7 +43,7 @@ const NotesPage = () => {
     isLoading: isNotesLoading,
     isError: hasNotesError,
     refetch: refetchNotes,
-  } = useInfiniteNotes(labelQuery ? "labelNotes" : "notes" , {
+  } = useInfiniteNotes(labelQuery ? "labelNotes" : "notes", {
     label: labelQuery,
   });
 
@@ -50,6 +55,7 @@ const NotesPage = () => {
   } = useNotes("pinned", {
     isPinned: true,
     label: labelQuery,
+    search: searchText
   });
 
   const { register, handleSubmit, getValues, reset, setValue, control } =
@@ -72,10 +78,15 @@ const NotesPage = () => {
   }, []);
 
   useEffect(() => {
-    console.log(notes, pinnedNotes)
+    console.log(notes, pinnedNotes);
     refetchPinned();
     refetchNotes();
   }, [labelQuery]);
+
+  useEffect(() => {
+    refetchPinned();
+    refetchNotes();
+  }, [searchText]);
 
   if (isNotesLoading || isPinnedLoading)
     return (

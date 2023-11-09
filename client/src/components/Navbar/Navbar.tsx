@@ -7,7 +7,7 @@ import { Searchbar } from "../Sidebar/Searchbar";
 import { useSidebarStore } from "@/stores/sidebar";
 import { useNavbarStore } from "@/stores/navbar";
 
-export default () => {
+export const Navbar = () => {
   const { toggleActive } = useSidebarStore();
   const { toggleColumn, isColumn } = useNavbarStore();
 

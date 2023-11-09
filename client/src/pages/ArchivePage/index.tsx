@@ -3,10 +3,13 @@ import { NotesList } from "@/components/Notes/NotesList";
 import { useHandleScroll } from "@/hooks/useHandleScroll";
 import { useRest } from "@/services";
 import { useInfiniteNotes } from "@/services/notes/hooks/useInfiniteNotes";
+import { useSearchStore } from "@/stores/search";
 import { useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 
 const ArchivePage = () => {
+  const { searchText } = useSearchStore();
+
   const {
     data: archiveNotes,
     fetchNextPage,
@@ -16,7 +19,7 @@ const ArchivePage = () => {
   } = useInfiniteNotes("archive", {
     isArchived: true,
   });
-  
+
   useEffect(() => {
     window.addEventListener("scroll", () => useHandleScroll(fetchNextPage));
     return () =>
@@ -24,6 +27,10 @@ const ArchivePage = () => {
         useHandleScroll(fetchNextPage)
       );
   }, []);
+
+  useEffect(() => {
+    refetchArchive();
+  }, [searchText]);
 
   if (isArchiveLoading || isArchiveLoading)
     return (
