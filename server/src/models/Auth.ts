@@ -1,7 +1,7 @@
 import { Schema, SchemaTypes, model } from "mongoose";
 
 const AuthSchema = new Schema({
-  username: {
+  email: {
     type: SchemaTypes.String,
     unique: true,
     required: true,

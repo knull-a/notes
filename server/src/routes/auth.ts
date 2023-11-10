@@ -3,13 +3,16 @@ import auth from "../controllers/auth";
 
 const authRoute = Router();
 
-const { getAllUsers } = auth;
+const { getAllUsers, registration, login, logout, activate } = auth;
 
-authRoute.post("/registration");
-authRoute.post("/login");
-authRoute.post("/logout");
+authRoute.post("/registration", registration);
 
-authRoute.get("/activate/:link");
+authRoute.post("/login", login);
+
+authRoute.post("/logout", logout);
+
+authRoute.get("/activate/:link", activate);
+
 authRoute.get("/refresh");
 
 // test
