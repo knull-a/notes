@@ -7,8 +7,6 @@ import cors from "cors"
 
 import "./database"
 
-import notesRoute from "./routes/notes";
-import labelRoute from "./routes/label";
 import { initRoutes } from "./routes";
 
 dotenv.config()

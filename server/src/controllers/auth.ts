@@ -24,7 +24,7 @@ class AuthController {
 
       return res.json(userData);
     } catch (error) {
-      res.json(String(error))
+      res.json(String(error));
       console.error(error);
     }
   }
@@ -45,6 +45,10 @@ class AuthController {
 
   async activate(req: Request, res: Response) {
     try {
+      const activationLink = req.params.link;
+      await authService.activate(activationLink);
+
+      return res.redirect(process.env.CLIENT_URL || "http://localhost:5173");
     } catch (error) {
       console.error(error);
     }

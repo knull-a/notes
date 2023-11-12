@@ -22,7 +22,10 @@ class AuthService {
       activationLink,
     });
 
-    await mailService.sendActivationMail(email, activationLink);
+    await mailService.sendActivationMail(
+      email,
+      `${process.env.API_URL}/api/v1/auth/activate/${activationLink}`
+    );
 
     // temp
     const userDto = new UserDto(user as any);
@@ -34,6 +37,15 @@ class AuthService {
       ...tokens,
       user: userDto,
     };
+  }
+
+  async activate(activationLink: string) {
+    const user = await Auth.findOne({ activationLink });
+    if (!user) {
+      throw new Error("Incorrect activation link");
+    }
+    user.isActivated = true;
+    await user.save();
   }
 }
 
