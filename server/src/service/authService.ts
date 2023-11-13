@@ -42,11 +42,57 @@ class AuthService {
   async activate(activationLink: string) {
     const user = await Auth.findOne({ activationLink });
     console.log(!!user);
-    if (!user) {
-      throw ApiError.BadRequest("Incorrect activation link");
-    }
+    if (!user) throw ApiError.BadRequest("Incorrect activation link");
+
     user.isActivated = true;
     await user.save();
+  }
+
+  async login(email: string, password: string) {
+    const user = await Auth.findOne({ email });
+    if (!user) throw ApiError.BadRequest("User not found");
+
+    const isPasswordEquals = await bcrypt.compare(password, user.password);
+    if (!isPasswordEquals) throw ApiError.BadRequest("Incorrect password");
+
+    const userDto = new UserDto(user as any);
+    const tokens = tokenService.generateToken({ ...(userDto as any) });
+    await tokenService.saveToken(userDto._id, tokens.refreshToken);
+
+    return {
+      ...tokens,
+      user: userDto,
+    };
+  }
+
+  async logout(refreshToken: string) {
+    const token = await tokenService.removeToken(refreshToken);
+    return token;
+  }
+
+  async refresh(refreshToken: string) {
+    if (!refreshToken) throw ApiError.UnauthorizedError();
+    const userData = tokenService.validateRefreshToken(refreshToken);
+    const tokenFromDb = await tokenService.findToken(refreshToken)
+    if (!userData || !tokenFromDb) {
+      throw ApiError.UnauthorizedError()
+    }
+
+    const user = await Auth.findById(userData.id)
+
+    const userDto = new UserDto(user as any);
+    const tokens = tokenService.generateToken({ ...(userDto as any) });
+    await tokenService.saveToken(userDto._id, tokens.refreshToken);
+
+    return {
+      ...tokens,
+      user: userDto,
+    };
+  }
+
+  async getAllUsers() {
+    const users = await Auth.find()
+    return users
   }
 }
 

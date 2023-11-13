@@ -1,6 +1,7 @@
 import { Router } from "express";
 import auth from "../controllers/auth";
 import { body } from "express-validator";
+import authMiddleware from "../middlewares/authMiddleware";
 
 const authRoute = Router();
 
@@ -22,6 +23,6 @@ authRoute.get("/activate/:link", activate);
 authRoute.get("/refresh");
 
 // test
-authRoute.get("/users", getAllUsers);
+authRoute.get("/users", authMiddleware, getAllUsers);
 
 export default authRoute;

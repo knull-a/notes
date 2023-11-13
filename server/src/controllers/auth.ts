@@ -35,6 +35,15 @@ class AuthController {
 
   async login(req: Request, res: Response, next: NextFunction) {
     try {
+      const { email, password } = req.body;
+      const userData = await authService.login(email, password);
+
+      res.cookie("refreshToken", userData.refreshToken, {
+        maxAge: getDays(30),
+        httpOnly: true,
+      });
+
+      return res.json(userData);
     } catch (error) {
       next(error);
     }
@@ -42,6 +51,10 @@ class AuthController {
 
   async logout(req: Request, res: Response, next: NextFunction) {
     try {
+      const { refreshToken } = req.cookies;
+      const token = await authService.logout(refreshToken);
+      res.clearCookie("refreshToken");
+      return res.json(token);
     } catch (error) {
       next(error);
     }
@@ -60,15 +73,26 @@ class AuthController {
 
   async refresh(req: Request, res: Response, next: NextFunction) {
     try {
+      const { refreshToken } = req.cookies;
+      const userData = await authService.refresh(refreshToken);
+
+      res.cookie("refreshToken", userData.refreshToken, {
+        maxAge: getDays(30),
+        httpOnly: true,
+      });
+
+      return res.json(userData);
     } catch (error) {
       next(error);
     }
   }
 
-  async getAllUsers(req: Request, res: Response) {
+  async getAllUsers(req: Request, res: Response, next: NextFunction) {
     try {
+      const users = await authService.getAllUsers();
+      return res.json(users);
     } catch (error) {
-      console.error(error);
+      next(error);
     }
   }
 }
