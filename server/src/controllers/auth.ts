@@ -1,6 +1,7 @@
-import { Request, Response } from "express";
-import { Auth } from "../models/Auth";
+import { NextFunction, Request, Response } from "express";
 import authService from "../service/authService";
+import { validationResult } from "express-validator";
+import { ApiError } from "../exceptions/apiError";
 
 function getDays(days: number) {
   const hours = 24;
@@ -12,8 +13,12 @@ function getDays(days: number) {
 }
 
 class AuthController {
-  async registration(req: Request, res: Response) {
+  async registration(req: Request, res: Response, next: NextFunction) {
     try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return next(ApiError.BadRequest("Validation error", errors.array()));
+      }
       const { email, password } = req.body;
       const userData = await authService.registration(email, password);
 
@@ -24,40 +29,39 @@ class AuthController {
 
       return res.json(userData);
     } catch (error) {
-      res.json(String(error));
-      console.error(error);
+      next(error);
     }
   }
 
-  async login(req: Request, res: Response) {
+  async login(req: Request, res: Response, next: NextFunction) {
     try {
     } catch (error) {
-      console.error(error);
+      next(error);
     }
   }
 
-  async logout(req: Request, res: Response) {
+  async logout(req: Request, res: Response, next: NextFunction) {
     try {
     } catch (error) {
-      console.error(error);
+      next(error);
     }
   }
 
-  async activate(req: Request, res: Response) {
+  async activate(req: Request, res: Response, next: NextFunction) {
     try {
       const activationLink = req.params.link;
       await authService.activate(activationLink);
 
       return res.redirect(process.env.CLIENT_URL || "http://localhost:5173");
     } catch (error) {
-      console.error(error);
+      next(error);
     }
   }
 
-  async refresh(req: Request, res: Response) {
+  async refresh(req: Request, res: Response, next: NextFunction) {
     try {
     } catch (error) {
-      console.error(error);
+      next(error);
     }
   }
 

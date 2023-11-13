@@ -1,17 +1,17 @@
 import { Auth } from "../models/Auth";
 import bcrypt from "bcrypt";
-import uuid from "uuid";
 import mailService from "./mailService";
 import tokenService from "./tokenService";
-import { UserDto, UserDtoType } from "../dtos/userDto";
+import { UserDto } from "../dtos/userDto";
 import { randomUUID } from "crypto";
+import { ApiError } from "../exceptions/apiError";
 
 class AuthService {
   async registration(email: string, password: string) {
     const candidate = await Auth.findOne({ email });
 
     if (candidate) {
-      throw new Error(`User ${email} already exists.`);
+      throw ApiError.BadRequest(`User ${email} already exists.`);
     }
 
     const hashPassword = await bcrypt.hash(password, 3);
@@ -41,8 +41,9 @@ class AuthService {
 
   async activate(activationLink: string) {
     const user = await Auth.findOne({ activationLink });
+    console.log(!!user);
     if (!user) {
-      throw new Error("Incorrect activation link");
+      throw ApiError.BadRequest("Incorrect activation link");
     }
     user.isActivated = true;
     await user.save();

@@ -1,9 +1,7 @@
-import { Express, Router } from "express";
+import { Express } from "express";
 import notesRoute from "./notes";
 import labelRoute from "./label";
 import authRoute from "./auth";
-
-const router = Router();
 
 export function initRoutes(app: Express) {
   app.use("/api/v1/auth", authRoute);

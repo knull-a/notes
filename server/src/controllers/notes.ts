@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import { readFileSync } from "fs";
 import { Note } from "../models/Notes";
 import { Label } from "../models/Labels";
+import { ApiError } from "../exceptions/apiError";
 
 type NoteQuery = {
   limit?: string;
@@ -127,7 +128,7 @@ class NotesController {
       });
 
       if (labelsToUpdate.length !== newNote.labels.length) {
-        throw new Error("Some label IDs are incorrect");
+        throw ApiError.BadRequest("Some label IDs are incorrect");
       }
 
       labelsToUpdate.forEach(async (label) => {
@@ -219,4 +220,4 @@ class NotesController {
   }
 }
 
-export default new NotesController()
+export default new NotesController();
