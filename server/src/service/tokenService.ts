@@ -1,14 +1,14 @@
 import jwt from "jsonwebtoken";
 import { Token } from "../models/Token";
-import { UserDto } from "../dtos/userDto";
+import { UserDto, UserDtoType } from "../dtos/userDto";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 class TokenService {
-  generateToken(payload: UserDto) {
+  generateToken(payload: UserDtoType) {
     const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET || "", {
-      expiresIn: "30s",
+      expiresIn: "30m",
     });
     const refreshToken = jwt.sign(
       payload,

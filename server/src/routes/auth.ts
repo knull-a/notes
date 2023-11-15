@@ -5,7 +5,7 @@ import authMiddleware from "../middlewares/authMiddleware";
 
 const authRoute = Router();
 
-const { getAllUsers, registration, login, logout, activate } = auth;
+const { getAllUsers, registration, login, logout, activate, refresh } = auth;
 
 authRoute.post(
   "/registration",
@@ -20,7 +20,7 @@ authRoute.post("/logout", logout);
 
 authRoute.get("/activate/:link", activate);
 
-authRoute.get("/refresh");
+authRoute.get("/refresh", refresh);
 
 // test
 authRoute.get("/users", authMiddleware, getAllUsers);

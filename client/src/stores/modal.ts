@@ -9,8 +9,9 @@ type Store = {
 
 const useModalStore = create<Store>()((set) => ({
   color: "",
-  changeColor: (newColor: string) => set(() => ({ color: newColor })),
   isOpened: false,
+  
+  changeColor: (newColor: string) => set(() => ({ color: newColor })),
   toggleModal: (status: boolean) => set(() => ({ isOpened: status })),
 }));
 

@@ -9,6 +9,7 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
   icon?: IconProps;
   isSidebarItem?: boolean;
+  full?: boolean;
 }
 
 export const CustomButton = ({
@@ -16,6 +17,7 @@ export const CustomButton = ({
   isLoading,
   text,
   isSidebarItem,
+  full,
   children,
   icon = { path: "", size: 1 },
   ...props
@@ -24,6 +26,7 @@ export const CustomButton = ({
     "px-3 py-1 rounded-2xl font-medium hover:bg-slightly-dark flex items-center gap-2":
       !isSidebarItem,
     "sidebar-item w-full": isSidebarItem,
+    "w-full text-center": full,
   });
   return (
     <>
@@ -34,7 +37,9 @@ export const CustomButton = ({
         type={type}
       >
         {icon.path && <Icon {...icon} />}
-        <span className={icon.path && "ml-3"}>{text || children}</span>
+        <span className={full ? "w-full text-center" : ""}>
+          {text || children}
+        </span>
       </button>
     </>
   );

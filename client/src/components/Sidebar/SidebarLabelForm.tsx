@@ -32,7 +32,7 @@ export const SidebarLabelForm = () => {
         isSidebarItem
         text="Edit Labels"
         onClick={toggleModalStatus}
-        icon={{ path: mdiPencilOutline, size: 1 }}
+        icon={{ path: mdiPencilOutline, size: 1, className: "mr-3" }}
       />
     </>
   );

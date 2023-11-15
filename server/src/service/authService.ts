@@ -29,7 +29,7 @@ class AuthService {
 
     // temp
     const userDto = new UserDto(user as any);
-    const tokens = tokenService.generateToken({ ...(userDto as any) });
+    const tokens = tokenService.generateToken({ ...userDto });
 
     await tokenService.saveToken(userDto._id, tokens.refreshToken);
 
@@ -56,7 +56,7 @@ class AuthService {
     if (!isPasswordEquals) throw ApiError.BadRequest("Incorrect password");
 
     const userDto = new UserDto(user as any);
-    const tokens = tokenService.generateToken({ ...(userDto as any) });
+    const tokens = tokenService.generateToken({ ...userDto });
     await tokenService.saveToken(userDto._id, tokens.refreshToken);
 
     return {
@@ -71,17 +71,18 @@ class AuthService {
   }
 
   async refresh(refreshToken: string) {
-    if (!refreshToken) throw ApiError.UnauthorizedError();
-    const userData = tokenService.validateRefreshToken(refreshToken);
-    const tokenFromDb = await tokenService.findToken(refreshToken)
-    if (!userData || !tokenFromDb) {
-      throw ApiError.UnauthorizedError()
+    if (!refreshToken) {
+      throw ApiError.UnauthorizedError();
     }
-
-    const user = await Auth.findById(userData.id)
-
+    const userData = tokenService.validateRefreshToken(refreshToken);
+    const tokenFromDb = await tokenService.findToken(refreshToken);
+    if (!userData || !tokenFromDb) {
+      throw ApiError.UnauthorizedError();
+    }
+    const user = await Auth.findOne({id: userData.id});
     const userDto = new UserDto(user as any);
-    const tokens = tokenService.generateToken({ ...(userDto as any) });
+    const tokens = tokenService.generateToken({ ...userDto });
+
     await tokenService.saveToken(userDto._id, tokens.refreshToken);
 
     return {
@@ -91,8 +92,8 @@ class AuthService {
   }
 
   async getAllUsers() {
-    const users = await Auth.find()
-    return users
+    const users = await Auth.find();
+    return users;
   }
 }
 

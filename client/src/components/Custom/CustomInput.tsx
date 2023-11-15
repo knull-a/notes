@@ -1,7 +1,7 @@
 import { Note } from "@/services/notes/types";
 import { useNavbarStore } from "@/stores/navbar";
 import classNames from "classnames";
-import { createElement, useEffect, useRef } from "react";
+import { InputHTMLAttributes, createElement, useEffect, useRef } from "react";
 import {
   RegisterOptions,
   UseFormGetValues,
@@ -11,7 +11,7 @@ import {
 
 type TextElement = "input" | "textarea";
 
-type Props = {
+interface Props extends InputHTMLAttributes<HTMLInputElement> {
   as?: TextElement;
   placeholder?: string;
   type?: string;
@@ -21,8 +21,9 @@ type Props = {
   register?: UseFormRegister<any>; // temp
   hidden?: boolean;
   disabled?: boolean;
+  styled?: boolean;
   setValue?: UseFormSetValue<any>;
-};
+}
 
 function useTextAutoResize(
   target: HTMLElement | (EventTarget & HTMLTextAreaElement)
@@ -38,6 +39,7 @@ export function CustomInput({
   type = "text",
   name,
   disabled,
+  styled,
   setValue,
   ...props
 }: Props) {
@@ -48,6 +50,8 @@ export function CustomInput({
   const classes = classNames({
     input: true,
     "pointer-events-none": disabled,
+    "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500":
+      styled,
   });
 
   useEffect(() => {

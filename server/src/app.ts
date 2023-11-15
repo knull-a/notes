@@ -18,7 +18,10 @@ const port = process.env.PORT || 9080;
 
 app.use(json());
 app.use(urlencoded());
-app.use(cors());
+app.use(cors({
+  credentials: true,
+  origin: process.env.CLIENT_URL || "localhost:5173"
+}));
 app.use(cookieParser());
 
 app.use(

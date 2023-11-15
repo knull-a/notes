@@ -1,15 +1,26 @@
 import { Link } from "react-router-dom";
 
 import Icon from "@mdi/react";
-import { mdiMenu, mdiViewGridOutline, mdiViewAgendaOutline } from "@mdi/js";
+import {
+  mdiMenu,
+  mdiViewGridOutline,
+  mdiViewAgendaOutline,
+  mdiLogout,
+  mdiEmailAlert,
+  mdiEmail,
+} from "@mdi/js";
 
 import { Searchbar } from "../Sidebar/Searchbar";
 import { useSidebarStore } from "@/stores/sidebar";
 import { useNavbarStore } from "@/stores/navbar";
+import { CustomButton } from "../Custom/CustomButton";
+import { useAuthStore } from "@/stores/auth";
+import getUsername from "@/utils/getUsername";
 
 export const Navbar = () => {
   const { toggleActive } = useSidebarStore();
   const { toggleColumn, isColumn } = useNavbarStore();
+  const { user, logout } = useAuthStore();
 
   return (
     <div className="fixed top-0 bg-dark z-50 w-full py-2 px-6 border-slightly-dark border-b flex items-center justify-between gap-2">
@@ -28,6 +39,12 @@ export const Navbar = () => {
           size={1}
         />
       </button>
+      {!user.isActivated && <Icon path={mdiEmailAlert} size={1} />}
+      <CustomButton
+        onClick={logout}
+        icon={{ path: mdiLogout, size: 1 }}
+        text={getUsername(user.email)}
+      />
     </div>
   );
 };

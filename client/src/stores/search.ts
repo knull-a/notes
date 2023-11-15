@@ -15,9 +15,12 @@ export const useSearchStore = create<SearchStore>((set) => ({
   notes: [],
   pathName: "notes",
   searchText: "",
+  
   setPathName: (newPathName: PathName) =>
     set((state) => ({ pathName: (state.pathName = newPathName) })),
+
   setNotes: (newNotes) => set((state) => ({ notes: (state.notes = newNotes) })),
+  
   setSearchText: (newSearchText) =>
     set((state) => ({ searchText: (state.searchText = newSearchText) })),
 }));
