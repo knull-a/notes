@@ -50,6 +50,7 @@ export const AuthPage = () => {
       <CustomInput
         register={register}
         options={{ required: true }}
+        type="password"
         name="password"
         placeholder="Password"
         styled
